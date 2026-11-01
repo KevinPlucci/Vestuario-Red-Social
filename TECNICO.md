@@ -72,6 +72,10 @@ En el frontend la URL de la API está en `src/environments/environment.developme
 | Backend | Render (Blueprint `render.yaml`, servicio `red-social-api`, plan gratuito) | <https://red-social-api-95af.onrender.com> |
 | Base de datos | MongoDB Atlas (cluster gratuito en AWS, base `red-social`) | — |
 
+El repositorio se llamaba `Plaza-Red-Social` y pasó a llamarse `Vestuario-Red-Social` con la temática de fútbol
+(GitHub redirige el nombre anterior). El proyecto de Vercel y su URL conservan el nombre `plaza-red-social`: cambiarlos
+implica agregar el dominio nuevo en Vercel y en `CORS_ORIGEN` de Render.
+
 Cada push a `main` publica los dos automáticamente. Para armarlo desde cero:
 
 1. **MongoDB Atlas:** crear un cluster gratuito y un usuario de base de datos, y en *Database & Network Access → IP
@@ -447,6 +451,7 @@ Imágenes:
 
 | Fecha | Versión | Cambios |
 |---|---|---|
+| 31/10/2026 | 0.3.1 | El repositorio pasa a llamarse `Vestuario-Red-Social`. La URL de Vercel sigue siendo `plaza-red-social.vercel.app`. |
 | 31/10/2026 | 0.3.0 | Temática de jugadores de fútbol: la aplicación pasa a llamarse Vestuario, el registro suma la posición (obligatoria) y el club (opcional), la posición se ve junto al autor, y hay nuevos colores, encabezado con franjas de césped y favicon con una pelota. Sprint 3. Backend: JWT de 15 minutos con `@nestjs/jwt` (registro y login devuelven `{ token, usuario }`), `SesionGuard` con el token en lugar de `X-Usuario-Id`, `POST /autenticacion/autorizar` y `POST /autenticacion/refrescar`, todas las rutas de publicaciones con sesión, `GET /publicaciones/:id`, `cantidadComentarios` en cada publicación, alta y edición de comentarios, variable `JWT_SECRETO` y 24 pruebas e2e nuevas (66 en total). Frontend: token en `localStorage`, guards de sesión e invitado, pantalla de carga que valida el token, interceptor que agrega el token y vuelve al login con un 401, aviso a los 10 minutos para extender la sesión, página de cada publicación con comentarios (escribir, cargar más de a 5 y editar los propios) y componente de comentario reutilizado en Mi perfil. Se corrige el modal, que podía cerrar el modal siguiente si se abría enseguida. |
 | 27/10/2026 | 0.2.0 | Sprint 2. Backend: controller de publicaciones (alta con imagen opcional, listado paginado con orden por fecha o "Me gusta" y filtro por usuario, baja lógica solo del autor o un administrador, dar y quitar "Me gusta"), listado de comentarios, `SesionGuard` con el header `X-Usuario-Id` como identidad provisoria y 23 pruebas e2e nuevas. Frontend: formulario para publicar, componente de publicación, selector de orden, paginación de a 5, "Me gusta", eliminar con confirmación, últimas 3 publicaciones con sus comentarios en Mi perfil, interceptor de sesión y spinner de carga. El correo del registro ahora exige un dominio completo, igual que el backend. |
 | 24/10/2026 | 0.1.2 | La documentación se divide en tres archivos: `README.md` con lo esencial, `FUNCIONAL.md` con las reglas, los requerimientos por sprint y los criterios adoptados, y `TECNICO.md` con la instalación, la arquitectura y las decisiones. |

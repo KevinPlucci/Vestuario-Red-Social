@@ -8,7 +8,7 @@ Hecha con **Angular 21** en el frontend y **NestJS 11** con **MongoDB** en el ba
 |---|---|
 | **Frontend** | <https://plaza-red-social.vercel.app> |
 | **Backend** | <https://red-social-api-95af.onrender.com> |
-| **Repositorio** | <https://github.com/KevinPlucci/Plaza-Red-Social> |
+| **Repositorio** | <https://github.com/KevinPlucci/Vestuario-Red-Social> |
 | **Estado** | Sprints 1, 2 y 3 terminados |
 
 ## Documentación
