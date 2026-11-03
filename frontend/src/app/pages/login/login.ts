@@ -1,8 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService, CUENTA_DESHABILITADA } from '../../core/services/auth.service';
 import { ModalService } from '../../core/services/modal.service';
 import { mensajesDeError } from '../../core/utils/errores';
 import { ErrorCampo } from '../../shared/components/error-campo';
@@ -36,12 +37,17 @@ export class Login {
       .pipe(finalize(() => this.enviando.set(false)))
       .subscribe({
         next: () => void this.router.navigateByUrl('/publicaciones'),
-        error: (error: unknown) =>
+        error: (error: unknown) => {
+          // 403 con este motivo: la contraseña es correcta, pero un administrador deshabilitó la cuenta.
+          const deshabilitada =
+            error instanceof HttpErrorResponse &&
+            (error.error as { motivo?: string } | null)?.motivo === CUENTA_DESHABILITADA;
           void this.modal.abrir({
             tipo: 'error',
-            titulo: 'No pudimos iniciar sesión',
+            titulo: deshabilitada ? 'Tu cuenta está deshabilitada' : 'No pudimos iniciar sesión',
             mensaje: mensajesDeError(error),
-          }),
+          });
+        },
       });
   }
 }

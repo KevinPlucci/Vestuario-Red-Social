@@ -38,7 +38,17 @@ Qué hace la aplicación y para quién está en [FUNCIONAL.md](FUNCIONAL.md).
    npm start
    ```
 
-3. Abrir <http://localhost:4200> y crear una cuenta desde *Registrarse*.
+3. Abrir <http://localhost:4200> y crear una cuenta desde *Registrarse*, o cargar los datos de ejemplo:
+
+   ```bash
+   cd backend
+   npm run sembrar          # usa la base del .env
+   ```
+
+   Crea la cuenta administradora **`admin` / `Admin2026`** y 10 jugadores de la Liga Profesional (por ejemplo
+   `lparedes`, `gmontiel` o `amartinez`, todos con la contraseña `Vestuario2026`), con publicaciones con y sin foto,
+   comentarios (algunos editados) y "Me gusta" repartidos en los últimos 30 días. Las cuentas que ya existen se
+   saltean, así que se puede correr más de una vez.
 
 ### Variables de entorno del backend
 
@@ -61,8 +71,9 @@ En el frontend la URL de la API está en `src/environments/environment.developme
 | `npm run lint` | backend | ESLint |
 | `npm run build` / `npm run start:prod` | backend | Compila a `dist/` y lo ejecuta |
 | `npm run perfil -- <correo o usuario> <usuario\|administrador>` | backend | Cambia el perfil de una cuenta (usa la base del `.env`) |
-| `npm start` | frontend | Servidor de desarrollo |
-| `npm run build` | frontend | Build de producción en `dist/frontend/browser` |
+| `npm run sembrar` | backend | Carga los datos de ejemplo: la cuenta `admin` y 10 jugadores con publicaciones, comentarios y "Me gusta" (usa la base del `.env`) |
+| `npm start` | frontend | Servidor de desarrollo (sin service worker) |
+| `npm run build` | frontend | Build de producción en `dist/frontend/browser`, con el service worker de la PWA |
 
 ### Deploy
 
@@ -93,6 +104,22 @@ Cada push a `main` publica los dos automáticamente. Para armarlo desde cero:
 En el plan gratuito, Render apaga el servicio tras 15 minutos sin uso: el primer pedido después de eso tarda cerca de
 un minuto. La pantalla de carga lo avisa si la validación del token demora.
 
+**Datos de ejemplo en producción.** Desde la carpeta `backend`, con la cadena de Atlas y la URL de Render (las
+imágenes se guardan con esa URL):
+
+```bash
+# Git Bash
+MONGODB_URI="mongodb+srv://…/red-social?…" URL_PUBLICA="https://red-social-api-95af.onrender.com" npm run sembrar
+```
+
+```powershell
+# PowerShell
+$env:MONGODB_URI="mongodb+srv://…/red-social?…"; $env:URL_PUBLICA="https://red-social-api-95af.onrender.com"; npm run sembrar
+```
+
+Las variables del comando tienen prioridad sobre las del `.env`, que sigue apuntando a la base local. En PowerShell
+quedan puestas en esa ventana: cerrarla antes de volver a trabajar con la base local.
+
 ---
 
 ## 2. Arquitectura
@@ -101,7 +128,7 @@ un minuto. La pantalla de carga lo avisa si la validación del token demora.
 
 | Capa | Tecnología |
 |---|---|
-| Frontend | Angular 21: componentes standalone, signals, formularios reactivos, lazy loading, guards funcionales, sin zone.js |
+| Frontend | Angular 21: componentes standalone, signals, formularios reactivos, lazy loading, guards funcionales, sin zone.js. Chart.js 4 (gráficos) y `@angular/service-worker` (PWA) |
 | Backend | NestJS 11 sobre Express, Mongoose, class-validator / class-transformer, bcryptjs, multer, `@nestjs/jwt` |
 | Base de datos | MongoDB (Atlas en producción) |
 | Pruebas | Jest + Supertest + mongodb-memory-server (backend) |
@@ -114,36 +141,46 @@ tp2-red-social/
   render.yaml                 deploy del backend en Render
   frontend/
     vercel.json               deploy del frontend en Vercel
-    public/                   favicon propio (SVG e ICO)
+    ngsw-config.json          qué guarda el service worker de la PWA
+    public/                   favicon, manifest.webmanifest e íconos de la PWA, escudos/ (30), estadios/ (29 fotos),
+                              fondos/ (cancha dibujada y silueta de perfil) y creditos.json (autor y licencia)
     src/
       environments/           URL de la API (desarrollo y producción)
-      styles.css              estilos generales y variables de color
+      styles.css              estilos generales, variables de color y el fondo con la cancha
       app/
         app.routes.ts         rutas (todas con lazy loading) y sus guards
         core/
-          models/             interfaces (Usuario, Sesion, Publicacion, Comentario, listados) y nombres de posiciones
-          services/           AuthService, PublicacionesService, ModalService y VencimientoSesion
-          guards/             sesionGuard (pantallas con sesión) e invitadoGuard (ingresar y registrarse)
+          models/             interfaces (Usuario, Sesion, Publicacion, Comentario, Estadisticas, listados),
+                              nombres de posiciones y clubes.ts (los 30 clubes con estadio, escudo y créditos)
+          services/           AuthService, PublicacionesService, UsuariosService, EstadisticasService, FondoService,
+                              ModalService y VencimientoSesion
+          guards/             sesionGuard (pantallas con sesión), invitadoGuard (ingresar y registrarse) y adminGuard
           interceptors/       sesion.interceptor.ts: agrega el token y resuelve los 401
-          utils/errores.ts    traduce los errores HTTP a mensajes
+          utils/              errores.ts (errores HTTP a mensajes) y duracion.ts (duración del token en palabras)
         shared/
-          components/         header, modal, error-campo, tarjeta-publicacion, comentario y paginacion
+          components/         header, modal, error-campo, tarjeta-publicacion, comentario, paginacion, escudo-club,
+                              formulario-cuenta (registro y alta del dashboard) y grafico (Chart.js)
+          pipes/              tiempoRelativo, nombrePosicion y plural
+          directives/         soloAdmin, imagenRespaldo y autoAltura
           validators.ts       validadores propios y textos de cada error
         pages/                cargando, login, registro, publicaciones (+ nueva-publicacion),
-                              publicacion (+ comentarios), mi-perfil, no-encontrada
+                              publicacion (+ comentarios), mi-perfil, dashboard (usuarios y estadisticas),
+                              creditos, no-encontrada
   backend/
     .env.example
+    semilla/                  avatares y fotos de los datos de ejemplo
     src/
       main.ts                 arranque y CORS
       app.module.ts           configuración, conexión a MongoDB y ValidationPipe global
-      comun/                  utilidades compartidas (recortar textos, validar ids)
+      comun/                  utilidades compartidas (recortar textos, validar ids) y PaginacionDto
       autenticacion/          controller (registro, login, autorizar, refrescar), service, DTO, token.ts,
-                              SesionGuard, @UsuarioActual y @TokenActual
-      usuarios/               esquema Usuario (con posición y club) y UsuariosService
-      publicaciones/          controllers de publicaciones y comentarios, services, DTO, esquemas y vistas
+                              SesionGuard, AdminGuard, @UsuarioActual y @TokenActual
+      usuarios/               esquema Usuario (con posición, club y activo), clubes.ts, UsuariosService y
+                              UsuariosController (dashboard de usuarios) con sus DTO
+      publicaciones/          controllers de publicaciones, comentarios y estadísticas, services, DTO, esquemas y vistas
       imagenes/               esquema Imagen, guardado, GET /imagenes/:id y validación del archivo
-      scripts/                cambiar-perfil.ts
-    test/                     pruebas e2e (autenticación y publicaciones)
+      scripts/                cambiar-perfil.ts, sembrar.ts y datos-semilla.ts
+    test/                     pruebas e2e (autenticación, publicaciones, usuarios y estadísticas)
 ```
 
 ### Rutas del frontend
@@ -155,22 +192,27 @@ tp2-red-social/
 | `/publicaciones` | Publicaciones. Acepta `?pagina=2&orden=meGusta` | Con sesión (`sesionGuard`) |
 | `/publicaciones/:id` | Una publicación en grande con sus comentarios | Con sesión (`sesionGuard`) |
 | `/mi-perfil` | Datos del usuario y sus últimas 3 publicaciones | Con sesión (`sesionGuard`) |
+| `/dashboard/usuarios` | Dashboard de usuarios: alta con perfil, listado y baja o alta lógica | Administradores (`adminGuard`) |
+| `/dashboard/estadisticas` | Dashboard de estadísticas: tres gráficos con un lapso elegible | Administradores (`adminGuard`) |
+| `/dashboard` | Redirige a `/dashboard/usuarios` | — |
 | `/login` | Ingreso | Sin sesión (`invitadoGuard`) |
 | `/registro` | Alta de cuenta | Sin sesión (`invitadoGuard`) |
+| `/creditos` | Autor y licencia de las fotos de los estadios y de los escudos | Todos |
 | Cualquier otra | Página 404 | Todos |
 
 `sesionGuard` manda a `/login` si no hay sesión y, la primera vez en cada visita, a `/cargando?destino=<ruta pedida>`
-para que el token se valide antes de mostrar la pantalla. Cada ruta define su `title`, que se ve en la pestaña del
-navegador (por ejemplo, "Mi perfil · Vestuario").
+para que el token se valide antes de mostrar la pantalla. `adminGuard` corre primero `sesionGuard` y, si la cuenta no
+es administradora, manda a `/publicaciones`. Cada ruta define su `title`, que se ve en la pestaña del navegador (por
+ejemplo, "Mi perfil · Vestuario").
 
 ### API
 
 | Método | Ruta | Cuerpo | Respuestas |
 |---|---|---|---|
-| `POST` | `/autenticacion/registro` | `multipart/form-data`: `nombre`, `apellido`, `correo`, `nombreUsuario`, `contrasena`, `fechaNacimiento` (AAAA-MM-DD), `posicion` (`arquero`, `defensor`, `mediocampista` o `delantero`), `club` (opcional), `descripcion` y el archivo `imagenPerfil` | **201** `{ token, usuario }` · **400** datos inválidos o imagen faltante · **409** correo o nombre de usuario en uso |
-| `POST` | `/autenticacion/login` | JSON `{ "usuario": "<correo o nombre de usuario>", "contrasena": "..." }` | **200** `{ token, usuario }` · **400** faltan datos · **401** credenciales incorrectas |
-| `POST` | `/autenticacion/autorizar` | — (token en el header) | **200** datos del usuario · **401** token faltante, inválido o vencido |
-| `POST` | `/autenticacion/refrescar` | — (token en el header) | **200** `{ token }` con el mismo payload y 15 minutos más · **401** token faltante, inválido o vencido |
+| `POST` | `/autenticacion/registro` | `multipart/form-data`: `nombre`, `apellido`, `correo`, `nombreUsuario`, `contrasena`, `fechaNacimiento` (AAAA-MM-DD), `posicion` (`arquero`, `defensor`, `mediocampista` o `delantero`), `club` (opcional: el identificador de uno de los 30 clubes, como `boca-juniors` o `river-plate`), `descripcion` y el archivo `imagenPerfil` | **201** `{ token, usuario }` · **400** datos inválidos, club fuera de la lista o imagen faltante · **409** correo o nombre de usuario en uso |
+| `POST` | `/autenticacion/login` | JSON `{ "usuario": "<correo o nombre de usuario>", "contrasena": "..." }` | **200** `{ token, usuario }` · **400** faltan datos · **401** credenciales incorrectas · **403** cuenta deshabilitada (con `motivo: "cuenta-deshabilitada"`) |
+| `POST` | `/autenticacion/autorizar` | — (token en el header) | **200** datos del usuario · **401** token faltante, inválido o vencido, o cuenta deshabilitada |
+| `POST` | `/autenticacion/refrescar` | — (token en el header) | **200** `{ token }` con el mismo payload y 15 minutos más · **401** token faltante, inválido o vencido, o cuenta deshabilitada |
 | `GET` | `/imagenes/:id` | — | **200** la imagen · **404** no existe |
 | `GET` | `/publicaciones` | Query: `orden` (`fecha` o `meGusta`, por defecto `fecha`), `usuario` (id), `offset` (por defecto 0), `limit` (1 a 50, por defecto 10) | **200** `{ publicaciones, total, offset, limit }` · **400** parámetros inválidos · **401** sin sesión |
 | `GET` | `/publicaciones/:id` | — | **200** la publicación · **401** · **404** no existe o fue eliminada |
@@ -181,17 +223,28 @@ navegador (por ejemplo, "Mi perfil · Vestuario").
 | `GET` | `/publicaciones/:id/comentarios` | Query: `offset`, `limit` | **200** `{ comentarios, total, offset, limit }`, los más recientes primero · **401** · **404** la publicación no existe |
 | `POST` | `/publicaciones/:id/comentarios` | JSON `{ "mensaje": "..." }` (hasta 500 caracteres) | **201** el comentario con su autor y fecha · **400** mensaje vacío o largo · **401** · **404** la publicación no existe |
 | `PUT` | `/publicaciones/:id/comentarios/:idComentario` | JSON `{ "mensaje": "..." }` | **200** el comentario con `modificado: true` · **400** · **401** · **403** no es el autor · **404** no existe o es de otra publicación |
+| `GET` | `/usuarios` | Query: `buscar` (opcional: nombre, apellido, nombre de usuario o correo), `offset`, `limit` | **200** `{ usuarios, total, offset, limit }`, las más nuevas primero · **400** · **401** · **403** no es administrador |
+| `POST` | `/usuarios` | `multipart/form-data`: los campos del registro más `perfil` (`usuario` o `administrador`) | **201** la cuenta creada (sin token: la sesión sigue siendo la del administrador) · **400** · **401** · **403** · **409** correo o nombre de usuario en uso |
+| `DELETE` | `/usuarios/:id` | — | **200** la cuenta con `activo: false` (baja lógica) · **400** es la cuenta propia · **401** · **403** · **404** no existe · **409** ya estaba deshabilitada |
+| `POST` | `/usuarios/:id/habilitar` | — | **200** la cuenta con `activo: true` · **401** · **403** · **404** no existe · **409** ya estaba habilitada |
+| `GET` | `/estadisticas/publicaciones-por-usuario` | Query: `desde` y `hasta` (fechas ISO 8601, opcionales: sin ellas, los últimos 30 días) | **200** `{ desde, hasta, datos: [{ usuario, cantidad }] }`, de mayor a menor, contando las publicaciones dadas de baja · **400** fechas inválidas, al revés o a más de un año · **401** · **403** |
+| `GET` | `/estadisticas/comentarios-por-dia` | Query: `desde`, `hasta` | **200** `{ desde, hasta, total, datos: [{ fecha, cantidad }] }`, un elemento por día (AAAA-MM-DD, hora de Argentina), también los días en 0 · **400** · **401** · **403** |
+| `GET` | `/estadisticas/comentarios-por-publicacion` | Query: `desde`, `hasta` | **200** `{ desde, hasta, datos: [{ publicacion: { id, titulo, autor }, cantidad }] }`, de mayor a menor, sin las publicaciones dadas de baja · **400** · **401** · **403** |
 
 Los errores siguen el formato de Nest, `{ statusCode, message, error }`. En los 400 de validación `message` es la lista
-de errores, uno por campo. En los 409 del registro se agrega `campo` (`correo` o `nombreUsuario`) para que el front
-marque el dato repetido. El usuario se devuelve con `id` (en lugar de `_id`) y nunca con la contraseña.
+de errores, uno por campo. En los 409 del registro (y del alta de usuarios) se agrega `campo` (`correo` o
+`nombreUsuario`) para que el front marque el dato repetido. El 403 del login y el 401 de una cuenta deshabilitada
+agregan `motivo: "cuenta-deshabilitada"`, para que el front muestre el aviso justo. El usuario se devuelve con `id` (en
+lugar de `_id`) y nunca con la contraseña.
 
 **Sesión.** Registro y login devuelven un JWT firmado con `JWT_SECRETO` (HS256) que vence a los 15 minutos. Su
 payload es `{ sub, nombreUsuario, perfil }` (el id, el nombre de usuario y el rol) más `iat` y `exp`. Todas las rutas
-de publicaciones y comentarios, `autorizar` y `refrescar` piden el header `Authorization: Bearer <token>`: sin él
-responden 401 con "Tenés que iniciar sesión para hacer esto."; con un token vencido, adulterado o de una cuenta que ya
-no existe, 401 con "Tu sesión venció o no es válida. Ingresá de nuevo.". Solo `GET /imagenes/:id` queda público,
-porque las imágenes se cargan con `<img>`, que no manda headers.
+de publicaciones, comentarios, usuarios y estadísticas, `autorizar` y `refrescar` piden el header
+`Authorization: Bearer <token>`: sin él responden 401 con "Tenés que iniciar sesión para hacer esto."; con un token
+vencido, adulterado o de una cuenta que ya no existe, 401 con "Tu sesión venció o no es válida. Ingresá de nuevo."; y
+si la cuenta fue deshabilitada, 401 con "Tu cuenta fue deshabilitada por un administrador.". Las de `/usuarios` y
+`/estadisticas` responden además 403 ("Solo un administrador puede hacer esto.") si la cuenta no es administradora.
+Solo `GET /imagenes/:id` queda público, porque las imágenes se cargan con `<img>`, que no manda headers.
 
 Cada publicación se responde así (el autor viaja sin correo ni contraseña, y nunca la lista de quién dio "Me gusta"):
 
@@ -201,7 +254,7 @@ Cada publicación se responde así (el autor viaja sin correo ni contraseña, y 
   "titulo": "Doblete en el clásico",
   "mensaje": "Ganamos 2 a 1 con dos goles de tiro libre.",
   "imagen": "https://red-social-api-95af.onrender.com/imagenes/6adf…",
-  "usuario": { "id": "6adf…", "nombre": "Lucía", "apellido": "Fernández", "nombreUsuario": "luciafernandez", "imagenPerfil": "https://…", "posicion": "delantero" },
+  "usuario": { "id": "6adf…", "nombre": "Lucía", "apellido": "Fernández", "nombreUsuario": "luciafernandez", "imagenPerfil": "https://…", "posicion": "delantero", "club": "banfield" },
   "cantidadMeGusta": 3,
   "meGustaMio": true,
   "cantidadComentarios": 5,
@@ -228,10 +281,11 @@ erDiagram
     string contrasena "hash de bcrypt, select false"
     date fechaNacimiento
     string posicion "arquero, defensor, mediocampista o delantero"
-    string club "opcional"
+    string club "opcional: identificador de uno de los 30 clubes"
     string descripcion
     string imagenPerfil "URL de /imagenes/:id"
     string perfil "usuario o administrador"
+    boolean activo "baja lógica de la cuenta"
     date createdAt
     date updatedAt
   }
@@ -294,6 +348,21 @@ Vencimiento:
 Mi perfil:
   listar({ usuario, limit: 3 }) y, para cada publicación, comentarios({ limit: 3 }) en paralelo (forkJoin)
 
+Dashboards (administradores):
+  adminGuard -> DashboardUsuarios / DashboardEstadisticas -> UsuariosService / EstadisticasService -> API
+  API: SesionGuard (token y cuenta activa) -> AdminGuard (perfil administrador, o 403) -> controller -> service
+  Estadísticas: las tres en paralelo (forkJoin) para el mismo lapso -> agregaciones ($match por fecha, $group,
+       $lookup, $sort) -> Chart.js dibuja barras, líneas y torta
+
+Cuenta deshabilitada:
+  Login -> 403 con motivo -> modal "Tu cuenta está deshabilitada"
+  Sesión abierta -> SesionGuard ve activo: false -> 401 con motivo -> sesionInterceptor -> AuthService.expulsar(motivo)
+       -> /login con el aviso "Tu cuenta fue deshabilitada"
+
+Fondo:
+  AuthService.usuario().club (o el club elegido en el registro) -> FondoService -> efecto en App que pone
+       --fondo-imagen en <html> -> el body muestra la cancha con el velo
+
 Imágenes:
   <img src="https://.../imagenes/:id"> -> ImagenesController -> colección imagenes
 ```
@@ -307,10 +376,39 @@ Imágenes:
 - **NestJS 11 y no 12.** La versión 12 salió hace poco y sus paquetes `@nestjs/mongoose` y `@nestjs/config` se
   publican solo como ESM, que Jest no puede cargar. Nest 11 usa CommonJS, que es lo que muestra la mayor parte del
   material y de las guías de deploy. Por lo mismo se usa `@nestjs/jwt` 11.
-- **Módulos por dominio**: `AutenticacionModule` usa a `UsuariosModule` (datos de las cuentas) y a `ImagenesModule`
-  (archivos), registra `JwtModule` y exporta `JwtModule` y `UsuariosModule`, que es lo que necesita `SesionGuard`.
-  `PublicacionesModule` tiene dos controllers (publicaciones y comentarios) y usa a `AutenticacionModule` e
-  `ImagenesModule`.
+- **Módulos por dominio**: `UsuariosModule` tiene los datos de las cuentas, el alta (`crearCuenta`, que usan el
+  registro y el dashboard) y, desde el sprint 4, `UsuariosController`. `AutenticacionModule` usa a `UsuariosModule`,
+  registra `JwtModule` como módulo global (así `SesionGuard` puede verificar tokens en cualquier módulo, también en
+  `UsuariosModule`, sin importarse en círculo) y exporta `UsuariosModule`. `PublicacionesModule` tiene tres
+  controllers (publicaciones, comentarios y estadísticas, como pide la consigna: "Módulo publicaciones - Estadísticas
+  controller") y usa a `AutenticacionModule` e `ImagenesModule`.
+- **Solo administradores con `AdminGuard`**: va después de `SesionGuard` (`@UseGuards(SesionGuard, AdminGuard)` en
+  los controllers de usuarios y de estadísticas) y responde 403 si el perfil del usuario que cargó la sesión no es
+  "administrador". Como el perfil sale de la base, un cambio rige en el pedido siguiente.
+- **Baja lógica de cuentas**: el campo `activo` (por defecto `true`). `DELETE /usuarios/:id` lo pasa a `false` y
+  `POST /usuarios/:id/habilitar` a `true`; cada uno responde 409 si la cuenta ya estaba así, y deshabilitar la propia
+  cuenta da 400. El login compara la contraseña primero y después mira `activo` (así una cuenta deshabilitada no se
+  puede usar para adivinar contraseñas: con una incorrecta sigue diciendo 401) y responde 403. `SesionGuard` también lo
+  revisa en cada pedido, así una sesión abierta se corta enseguida sin esperar a que venza el token. Las dos respuestas
+  llevan `motivo: "cuenta-deshabilitada"` (constante en `cuenta-deshabilitada.ts`) para que el front distinga este
+  caso de una sesión vencida.
+- **Club validado contra la lista**: `clubes.ts` tiene los identificadores de los 30 clubes y el DTO del registro usa
+  `@IsIn(CLUBES)`. El esquema no tiene `enum`, así una cuenta vieja con un club escrito a mano se puede seguir
+  guardando (por ejemplo, al deshabilitarla). El front tiene la misma lista con el nombre, el estadio y los créditos.
+- **Estadísticas con agregaciones**: `RangoFechasDto` convierte `desde` y `hasta` en `Date` (`@Type`) y los valida;
+  sin alguno de los dos, se usan los últimos 30 días, y se rechaza un lapso al revés o de más de 366 días.
+  Publicaciones por usuario agrupa por autor (`$group`, `$lookup` a `usuarios`), contando también las dadas de baja.
+  Comentarios por día agrupa con `$dateToString` en la zona `America/Argentina/Buenos_Aires`, para que un comentario de
+  las 22 h no caiga en el día siguiente (UTC), y completa en 0 los días sin comentarios. Comentarios por publicación
+  agrupa por publicación y descarta las dadas de baja después del `$lookup`.
+- **`PaginacionDto` en `comun/`**: lo usan los listados de publicaciones, comentarios y usuarios
+  (`ListarUsuariosDto` lo extiende con `buscar`, que se busca sin distinguir mayúsculas en nombre, apellido, nombre de
+  usuario y correo, escapando los caracteres especiales de las expresiones regulares).
+- **Datos de ejemplo** (`scripts/sembrar.ts`): arranca Nest sin servidor HTTP
+  (`NestFactory.createApplicationContext`) y usa los mismos services de la API, así cada dato pasa por las mismas
+  reglas (contraseñas con bcrypt, imágenes guardadas en `imagenes`). Después cambia las fechas directo en la colección
+  (`collection.updateOne`, porque Mongoose pisa `createdAt`) para repartir publicaciones y comentarios en los últimos
+  30 días.
 - **JWT con `@nestjs/jwt`**: la clave sale de `JWT_SECRETO` (con `getOrThrow`, así la API no arranca sin ella) y la
   duración, de `DURACION_TOKEN_SEGUNDOS` (15 minutos) en `autenticacion/token.ts`. Registro y login responden
   `{ token, usuario }`. El token viaja en el cuerpo y no en una cookie: el front y la API están en dominios distintos
@@ -366,8 +464,13 @@ Imágenes:
   porque el tipo que manda el navegador se puede falsear, y guarda el tipo detectado. Rechaza los archivos de más de
   2 MB con un mensaje en castellano. multer tiene además un tope de 10 MB para no cargar en memoria archivos enormes.
 - **Configuración con `@nestjs/config`** y CORS limitado a los orígenes de `CORS_ORIGEN`.
-- **Pruebas e2e** con Supertest contra un MongoDB en memoria (mongodb-memory-server), sin tocar la base real: 66 en
-  total. Autenticación (30): registro con posición y club (y sin club), token con identidad, rol y 15 minutos,
+- **Pruebas e2e** con Supertest contra un MongoDB en memoria (mongodb-memory-server), sin tocar la base real: 87 en
+  total. Usuarios (14, sprint 4): permisos (401 sin sesión, 403 sin ser administrador), listado paginado y búsqueda,
+  alta con perfil elegido (sin token en la respuesta, 400 y 409), deshabilitar (login 403 con motivo, token en uso 401,
+  409 si ya estaba, 400 la cuenta propia, 404) y habilitar. Estadísticas (6, sprint 4): permisos, publicaciones por
+  usuario (incluidas las dadas de baja), comentarios por día en la hora de Argentina con los días en 0, comentarios
+  por publicación sin las dadas de baja, lapso por defecto de 30 días y los 400 de fechas. Autenticación (31): registro
+  con posición y club (y sin club, y con un club fuera de la lista), cuenta activa al crearse, token con identidad, rol y 15 minutos,
   contraseña encriptada, imagen servida, duplicados, cada regla de la contraseña, posición inválida, mensajes por
   campo, imagen faltante, inválida o pesada, login por usuario y por correo, `autorizar` (válido, sin token,
   adulterado, firmado con otra clave, vencido, cuenta inexistente) y `refrescar` (mismo payload y 15 minutos más,
@@ -388,17 +491,22 @@ Imágenes:
 - **Guards funcionales** (`core/guards/sesion.guards.ts`): `sesionGuard` protege las pantallas de la aplicación y,
   mientras el token no fue confirmado por el servidor en la visita (`sesionConfirmada`), manda a la pantalla de carga
   con la ruta pedida en `?destino=`. `invitadoGuard` saca de *Ingresar* y *Crear cuenta* a quien ya tiene sesión.
+  `adminGuard` corre `sesionGuard` y, si la cuenta no es administradora, manda a Publicaciones. Es para la pantalla:
+  la API controla cada permiso por su cuenta.
 - **Pantalla de carga** (`pages/cargando`): llama a `autorizar`; si responde bien, sigue a `destino` (solo rutas
   internas, nunca `//otro-sitio` ni la propia pantalla); si el servidor no contesta, muestra el error con *Reintentar*
   en lugar de cerrar la sesión, y a los 4 segundos avisa que Render puede estar despertándose. El 401 lo resuelve el
   interceptor.
 - **Interceptor de sesión** (`sesionInterceptor`): agrega `Authorization: Bearer <token>` a los pedidos a la API.
   Si un pedido que llevaba token recibe 401, llama a `AuthService.expulsar()` (cierra la sesión, va a `/login` y
-  avisa) y corta el error con `EMPTY`, para que la pantalla no muestre además su propio modal de error. El 401 del
-  login (credenciales incorrectas) no pasa por ahí, porque ese pedido no lleva token.
+  avisa) y corta el error con `EMPTY`, para que la pantalla no muestre además su propio modal de error. Si el 401 trae
+  `motivo: "cuenta-deshabilitada"`, el aviso es "Tu cuenta fue deshabilitada" en lugar de "Tu sesión venció". El 401
+  del login (credenciales incorrectas) no pasa por ahí, porque ese pedido no lleva token; el 403 de una cuenta
+  deshabilitada lo muestra el login con su propio título.
 - **Aviso de vencimiento** (`VencimientoSesion`): un `effect` sobre `vencimiento` programa dos temporizadores por
-  token, el aviso 5 minutos antes (a los 10 de sesión) y el cierre al vencer, y los reprograma cada vez que cambia el
-  token. El aviso dice cuántos minutos quedan, y *Extender sesión* llama a `refrescar`. Si mientras el modal está
+  token, el aviso cuando falta un tercio de la duración (con 15 minutos, 5 minutos antes: a los 10 de sesión) y el
+  cierre al vencer, y los reprograma cada vez que cambia el token. La duración sale del propio token (`exp - iat`), así
+  el aviso sigue siendo correcto si cambia `DURACION_TOKEN_SEGUNDOS`. El aviso dice cuántos minutos quedan, y *Extender sesión* llama a `refrescar`. Si mientras el modal está
   abierto la sesión se cierra o el token cambia, la respuesta se ignora. El servicio se crea al arrancar, desde `App`.
 - **Servicios con `HttpClient` y observables**: `AuthService` devuelve observables y guarda la sesión con `map` y
   `tap`. Los componentes se suscriben y usan `finalize` para habilitar de nuevo el botón.
@@ -406,7 +514,11 @@ Imágenes:
   segura (informa cada regla que falta), contraseñas iguales (validador de grupo), nombre de usuario, correo o nombre
   de usuario para el login, fecha de nacimiento e imagen (tipo y tamaño). El componente `app-error-campo` muestra el
   primer error de cada campo con un texto claro, y el error 409 del servidor se marca en el campo con `setErrors`.
-  La posición es un `<select>` obligatorio y el club, un campo opcional de hasta 50 caracteres.
+  La posición es un `<select>` obligatorio y el club, un `<select>` opcional con los 30 clubes.
+- **Un formulario de cuenta para dos pantallas** (`app-formulario-cuenta`): el registro y el alta del dashboard usan el
+  mismo componente, que emite el `FormData` listo con `output()`. Con `[elegirPerfil]="true"` suma los radio buttons
+  del perfil. La pantalla que lo usa decide a qué ruta mandarlo y le pide marcar el campo repetido de un 409
+  (`marcarError`) o vaciarse (`reiniciar`) por medio de `viewChild`.
 - **El registro viaja como `FormData`** porque incluye la imagen. "Repetir contraseña" no se envía. La vista previa
   usa `URL.createObjectURL` y se libera al cambiar de imagen o salir de la pantalla.
 - **Modal propio sobre `<dialog>`**: trae el foco, el fondo bloqueado y el cierre con Esc. `ModalService` abre el
@@ -440,10 +552,43 @@ Imágenes:
 - **Accesibilidad**: cada campo tiene su `<label>` y el mensaje de error queda fuera de él, para que no forme parte del
   nombre del campo. Hay foco visible, el input de archivo está oculto pero sigue siendo accesible a través del botón,
   y la pantalla de carga y el pie de los comentarios anuncian sus cambios con `aria-live`.
-- **Diseño**: estilos generales con variables de color en `styles.css` (fondo gris claro, tarjetas blancas y el verde
-  del césped como color principal), sin librerías de componentes. El encabezado tiene franjas verdes como una cancha
-  recién cortada. Se adapta al ancho del celular sin scroll horizontal.
-- **Favicon propio** en SVG (una pelota de fútbol sobre fondo verde) con su versión ICO de 16, 32 y 48 px.
+- **Diseño**: estilos generales con variables de color en `styles.css` (tarjetas blancas y el verde del césped como
+  color principal), sin librerías de componentes. El encabezado tiene franjas verdes como una cancha recién cortada y
+  el título de cada pantalla, una línea de cal debajo. Se adapta al ancho del celular sin scroll horizontal.
+- **Fondo según el club** (`FondoService`): un `computed` elige la foto del estadio del club del usuario (o el que se
+  está eligiendo en el registro, con `mostrar()`) o la cancha dibujada, y un `effect` en `App` la pone en la variable
+  CSS `--fondo-imagen` de `<html>`. El `body` la muestra con `background-attachment: fixed` debajo de un velo verde
+  oscuro (`--velo-fondo`), y los textos que van directo sobre el fondo usan la clase `sobre-fondo` (blancos, con
+  sombra). Las fotos se achicaron a 1600 px de ancho (unos 160 KB cada una) y los escudos a 64 px.
+- **Escudos** (`app-escudo-club`): recibe el identificador del club y muestra el escudo chiquito (14 a 20 px), con el
+  nombre al lado si se pide. Se usa junto al autor de cada publicación y comentario, en Mi perfil y en el dashboard.
+  `clubes.ts` se generó con un script a partir de Wikipedia y Wikimedia Commons, con el autor y la licencia de cada
+  imagen, que se muestran al pie y en `/creditos`.
+- **Pipes propios** (`shared/pipes`, puros): `tiempoRelativo` (fecha a "hace 5 min", usa `DatePipe` con el locale para
+  las fechas de más de una semana), `nombrePosicion` (identificador de la posición a su nombre) y `plural` (cantidad
+  con la palabra en singular o plural).
+- **Directivas propias** (`shared/directives`): `*appSoloAdmin` es estructural (con `TemplateRef` y
+  `ViewContainerRef`, y un `effect` que crea o saca la vista si cambia la sesión); `appImagenRespaldo` escucha el
+  `error` de un `<img>` y pone la silueta por defecto; `appAutoAltura` ajusta la altura del `<textarea>` al contenido
+  al escribir y cuando el formulario cambia el valor (por ejemplo, al vaciarlo después de publicar).
+- **Dashboard de usuarios**: la búsqueda (`toObservable` del signal con `debounceTime` de 300 ms), la página y un
+  `BehaviorSubject` para recargar se combinan con `combineLatest` y `switchMap`, que descarta las respuestas viejas.
+  Al deshabilitar o habilitar, la fila se reemplaza por la cuenta que devuelve la API, sin volver a pedir la lista.
+- **Gráficos con Chart.js** (`app-grafico`): un componente que recibe la configuración con `input()` y crea el gráfico
+  en un `afterRenderEffect` (cuando el `<canvas>` ya existe); si la configuración cambia, actualiza los datos con
+  `update()` en lugar de rearmarlo, y lo destruye al salir. Solo se registran las piezas que se usan (barras, líneas,
+  torta, escalas y tooltip) y Chart.js va en el chunk perezoso del dashboard, así no pesa en el resto de la aplicación.
+  Los colores se validaron para daltonismo con un script que simula protanopía y deuteranopía y mide la distancia
+  entre cada par. Al cambiar el lapso, los gráficos anteriores quedan atenuados mientras llegan los datos nuevos, y
+  cada publicación de la torta conserva su color si sigue entre las primeras. Cada tarjeta tiene su tabla
+  ("Ver datos"), que también sirve a los lectores de pantalla.
+- **PWA**: `ng add @angular/pwa` sumó el manifest, los íconos y `ngsw-config.json`. El service worker guarda la
+  aplicación al instalarse (`prefetch`), los íconos, escudos y fotos cuando se usan (`lazy`) y, en un `dataGroup` con
+  estrategia `performance`, las imágenes que sirve la API (hasta 30 días: nunca cambian). No guarda las respuestas de
+  la API, que dependen de la sesión. Se registra solo fuera de modo desarrollo, cuando la aplicación queda estable o a
+  los 30 segundos.
+- **Favicon e íconos propios** en SVG (una pelota de fútbol sobre fondo verde), con su versión ICO de 16, 32 y 48 px y
+  los íconos de la PWA de 72 a 512 px.
 
 ---
 
@@ -451,6 +596,7 @@ Imágenes:
 
 | Fecha | Versión | Cambios |
 |---|---|---|
+| 03/11/2026 | 0.4.0 | Sprint 4. Backend: `UsuariosController` solo para administradores (`AdminGuard`): listado paginado con búsqueda, alta con perfil elegible y baja y alta lógica (`activo`); el login responde 403 a una cuenta deshabilitada y `SesionGuard` corta su sesión con 401, los dos con `motivo`; `EstadisticasController` en el módulo de publicaciones con publicaciones por usuario, comentarios por día y comentarios por publicación en un lapso; el club se valida contra los 30 de la Liga Profesional; el autor de cada publicación viaja con su club; `JwtModule` global; `PaginacionDto` pasa a `comun/`; comando `npm run sembrar` con una cuenta administradora y 10 jugadores de ejemplo; 21 pruebas e2e nuevas (87 en total). Frontend: dashboards de usuarios y de estadísticas (Chart.js: barras, líneas y torta, con lapso elegible y tabla de datos) con `adminGuard` y accesos en el encabezado; botón para eliminar cualquier publicación como administrador; aviso de cuenta deshabilitada en el login y al cortarse la sesión; formulario de cuenta compartido por el registro y el dashboard; club elegido de una lista con su escudo, fondo con la cancha del club del jugador (o una cancha dibujada) y página de créditos de las imágenes; PWA (manifest, íconos y service worker); pipes `tiempoRelativo`, `nombrePosicion` y `plural`, y directivas `*appSoloAdmin`, `appImagenRespaldo` y `appAutoAltura`. El aviso para extender la sesión se calcula según la duración del token (a falta de un tercio). |
 | 31/10/2026 | 0.3.1 | El repositorio pasa a llamarse `Vestuario-Red-Social`. La URL de Vercel sigue siendo `plaza-red-social.vercel.app`. |
 | 31/10/2026 | 0.3.0 | Temática de jugadores de fútbol: la aplicación pasa a llamarse Vestuario, el registro suma la posición (obligatoria) y el club (opcional), la posición se ve junto al autor, y hay nuevos colores, encabezado con franjas de césped y favicon con una pelota. Sprint 3. Backend: JWT de 15 minutos con `@nestjs/jwt` (registro y login devuelven `{ token, usuario }`), `SesionGuard` con el token en lugar de `X-Usuario-Id`, `POST /autenticacion/autorizar` y `POST /autenticacion/refrescar`, todas las rutas de publicaciones con sesión, `GET /publicaciones/:id`, `cantidadComentarios` en cada publicación, alta y edición de comentarios, variable `JWT_SECRETO` y 24 pruebas e2e nuevas (66 en total). Frontend: token en `localStorage`, guards de sesión e invitado, pantalla de carga que valida el token, interceptor que agrega el token y vuelve al login con un 401, aviso a los 10 minutos para extender la sesión, página de cada publicación con comentarios (escribir, cargar más de a 5 y editar los propios) y componente de comentario reutilizado en Mi perfil. Se corrige el modal, que podía cerrar el modal siguiente si se abría enseguida. |
 | 27/10/2026 | 0.2.0 | Sprint 2. Backend: controller de publicaciones (alta con imagen opcional, listado paginado con orden por fecha o "Me gusta" y filtro por usuario, baja lógica solo del autor o un administrador, dar y quitar "Me gusta"), listado de comentarios, `SesionGuard` con el header `X-Usuario-Id` como identidad provisoria y 23 pruebas e2e nuevas. Frontend: formulario para publicar, componente de publicación, selector de orden, paginación de a 5, "Me gusta", eliminar con confirmación, últimas 3 publicaciones con sus comentarios en Mi perfil, interceptor de sesión y spinner de carga. El correo del registro ahora exige un dominio completo, igual que el backend. |

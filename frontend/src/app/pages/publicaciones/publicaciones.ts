@@ -7,6 +7,8 @@ import { AuthService } from '../../core/services/auth.service';
 import { ModalService } from '../../core/services/modal.service';
 import { PublicacionesService } from '../../core/services/publicaciones.service';
 import { mensajesDeError } from '../../core/utils/errores';
+import { FondoService } from '../../core/services/fondo.service';
+import { EscudoClub } from '../../shared/components/escudo-club';
 import { Paginacion } from '../../shared/components/paginacion';
 import { TarjetaPublicacion } from '../../shared/components/tarjeta-publicacion';
 import { NuevaPublicacion } from './nueva-publicacion';
@@ -24,12 +26,13 @@ function leerParametros(params: ParamMap): { pagina: number; orden: OrdenPublica
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [NuevaPublicacion, TarjetaPublicacion, Paginacion],
+  imports: [NuevaPublicacion, TarjetaPublicacion, Paginacion, EscudoClub],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css',
 })
 export class Publicaciones {
   protected readonly auth = inject(AuthService);
+  protected readonly fondo = inject(FondoService);
   private readonly servicio = inject(PublicacionesService);
   private readonly modal = inject(ModalService);
   private readonly route = inject(ActivatedRoute);

@@ -53,7 +53,7 @@ export class Usuario {
   @Prop({ type: String, enum: POSICIONES, required: true })
   posicion: Posicion;
 
-  /** Club en el que juega (opcional). */
+  /** Club en el que juega (opcional): el identificador de uno de los 30 de CLUBES. */
   @Prop({ trim: true })
   club?: string;
 
@@ -63,6 +63,10 @@ export class Usuario {
 
   @Prop({ type: String, enum: PERFILES, default: 'usuario' })
   perfil: Perfil;
+
+  /** Baja lógica de la cuenta: con false no puede ingresar ni usar su token. */
+  @Prop({ default: true })
+  activo: boolean;
 }
 
 export type UsuarioDocument = HydratedDocument<Usuario>;

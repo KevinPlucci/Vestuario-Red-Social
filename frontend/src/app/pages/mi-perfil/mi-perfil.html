@@ -8,6 +8,7 @@
       <div class="presentacion">
         <img
           class="foto"
+          appImagenRespaldo
           [src]="usuario.imagenPerfil"
           [alt]="'Foto de perfil de ' + usuario.nombre"
         />
@@ -16,7 +17,12 @@
           <p class="texto-suave">{{ '@' + usuario.nombreUsuario }}</p>
           <div class="etiquetas">
             @if (usuario.posicion) {
-              <span class="etiqueta">{{ posiciones[usuario.posicion] }}</span>
+              <span class="etiqueta">{{ usuario.posicion | nombrePosicion }}</span>
+            }
+            @if (usuario.club) {
+              <span class="etiqueta club"
+                ><app-escudo-club [club]="usuario.club" [conNombre]="true" [tamano]="16"
+              /></span>
             }
             <span class="etiqueta">{{
               usuario.perfil === 'administrador' ? 'Administrador' : 'Usuario'
@@ -34,11 +40,11 @@
         </div>
         <div>
           <dt>Club</dt>
-          <dd>{{ usuario.club || 'Sin club' }}</dd>
+          <dd><app-escudo-club [club]="usuario.club" [conNombre]="true" [tamano]="20" /></dd>
         </div>
         <div>
           <dt>Posición</dt>
-          <dd>{{ usuario.posicion ? posiciones[usuario.posicion] : 'Sin indicar' }}</dd>
+          <dd>{{ usuario.posicion | nombrePosicion }}</dd>
         </div>
         <div>
           <dt>Fecha de nacimiento</dt>
@@ -53,9 +59,9 @@
     </section>
 
     <section class="ultimas">
-      <h2>Mis últimas publicaciones</h2>
+      <h2 class="sobre-fondo">Mis últimas publicaciones</h2>
       @if (cargando() && !ultimas()) {
-        <div class="estado">
+        <div class="estado sobre-fondo">
           <span class="spinner" aria-hidden="true"></span>
           <p class="texto-suave">Cargando tus publicaciones...</p>
         </div>

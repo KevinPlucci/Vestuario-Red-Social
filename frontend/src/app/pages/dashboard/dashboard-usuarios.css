@@ -1,0 +1,119 @@
+.tarjeta + .tarjeta {
+  margin-top: 20px;
+}
+
+.titulo-seccion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.titulo-seccion h2 {
+  margin: 0;
+}
+
+.buscar input {
+  width: min(320px, 100%);
+  padding: 8px 12px;
+  font: inherit;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+}
+
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.cuentas {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: opacity 0.15s;
+}
+
+.cuentas.actualizando {
+  opacity: 0.55;
+}
+
+/* Cada cuenta: foto, datos, perfil y estado, y la acción. En el celular se apilan. */
+.cuenta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.cuenta:last-child {
+  border-bottom: 0;
+}
+
+.cuenta.inactiva .avatar,
+.cuenta.inactiva .datos {
+  opacity: 0.6;
+}
+
+.datos {
+  display: grid;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.datos span {
+  font-size: 0.88rem;
+  overflow-wrap: anywhere;
+}
+
+.marcas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.etiqueta.admin {
+  color: #fff;
+  background: var(--color-primario);
+}
+
+.etiqueta.baja {
+  color: var(--color-error);
+  background: var(--color-error-suave);
+}
+
+.propia {
+  font-size: 0.88rem;
+}
+
+.sin-resultados {
+  padding: 24px 0;
+  text-align: center;
+}
+
+.estado {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 24px 0;
+}
+
+@media (max-width: 640px) {
+  .cuenta {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .marcas,
+  .cuenta > .btn,
+  .propia {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

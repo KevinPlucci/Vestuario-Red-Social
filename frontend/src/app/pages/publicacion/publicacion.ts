@@ -42,7 +42,7 @@ import { Comentarios } from './comentarios';
           <app-comentarios [publicacion]="pub.id" />
         </div>
       } @else {
-        <div class="estado">
+        <div class="estado sobre-fondo">
           <span class="spinner" aria-hidden="true"></span>
           <p class="texto-suave">Cargando publicación...</p>
         </div>
@@ -54,7 +54,9 @@ import { Comentarios } from './comentarios';
       display: inline-block;
       margin-bottom: 16px;
       font-weight: 600;
+      color: #fff;
       text-decoration: none;
+      text-shadow: 0 1px 3px rgb(0 0 0 / 45%);
     }
     .volver:hover {
       text-decoration: underline;

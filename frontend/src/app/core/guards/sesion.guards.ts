@@ -16,6 +16,18 @@ export const sesionGuard: CanActivateFn = (_ruta, estado) => {
   return true;
 };
 
+/**
+ * Dashboard: además de la sesión, perfil de administrador; si no, a publicaciones. Es para la
+ * navegación: la API igual responde 403 a cualquier pedido de administración de un usuario común.
+ */
+export const adminGuard: CanActivateFn = (ruta, estado) => {
+  const sesion = sesionGuard(ruta, estado);
+  if (sesion !== true) return sesion;
+  return inject(AuthService).usuario()?.perfil === 'administrador'
+    ? true
+    : inject(Router).createUrlTree(['/publicaciones']);
+};
+
 /** Ingresar y crear cuenta: con la sesión iniciada se va directo a publicaciones. */
 export const invitadoGuard: CanActivateFn = () =>
   inject(AuthService).haySesion() ? inject(Router).createUrlTree(['/publicaciones']) : true;

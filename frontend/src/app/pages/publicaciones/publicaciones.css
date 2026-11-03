@@ -50,3 +50,11 @@
   gap: 10px;
   padding: 40px 0;
 }
+
+/* Club del jugador y estadio que se ve de fondo. */
+.club-fondo {
+  display: block;
+  margin-top: 6px;
+  font-weight: 600;
+  color: #fff;
+}

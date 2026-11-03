@@ -1,91 +1,35 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { NOMBRES_POSICION, Posicion } from '../../core/models/usuario';
 import { AuthService } from '../../core/services/auth.service';
+import { FondoService } from '../../core/services/fondo.service';
 import { ModalService } from '../../core/services/modal.service';
 import { campoDelError, mensajesDeError } from '../../core/utils/errores';
-import { ErrorCampo } from '../../shared/components/error-campo';
-import {
-  contrasenaSegura,
-  contrasenasIguales,
-  correoValido,
-  fechaNacimientoValida,
-  imagenValida,
-  nombreUsuarioValido,
-  TIPOS_IMAGEN,
-} from '../../shared/validators';
+import { FormularioCuenta } from '../../shared/components/formulario-cuenta';
 
 @Component({
   selector: 'app-registro',
-  imports: [ReactiveFormsModule, RouterLink, ErrorCampo],
+  imports: [RouterLink, FormularioCuenta],
   templateUrl: './registro.html',
-  styleUrl: './registro.css',
 })
 export class Registro {
-  private readonly fb = inject(NonNullableFormBuilder);
   private readonly auth = inject(AuthService);
   private readonly modal = inject(ModalService);
   private readonly router = inject(Router);
+  protected readonly fondo = inject(FondoService);
+  private readonly formulario = viewChild.required(FormularioCuenta);
 
-  protected readonly tiposImagen = TIPOS_IMAGEN.join(',');
-  protected readonly hoy = new Date().toISOString().slice(0, 10);
-  protected readonly posiciones = Object.entries(NOMBRES_POSICION).map(([valor, texto]) => ({
-    valor,
-    texto,
-  }));
   protected readonly enviando = signal(false);
-  protected readonly vistaPrevia = signal<string | null>(null);
-
-  protected readonly form = this.fb.group(
-    {
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      apellido: ['', [Validators.required, Validators.maxLength(50)]],
-      correo: ['', [Validators.required, correoValido, Validators.maxLength(100)]],
-      nombreUsuario: ['', [Validators.required, nombreUsuarioValido]],
-      contrasena: ['', [Validators.required, contrasenaSegura]],
-      repetirContrasena: ['', Validators.required],
-      fechaNacimiento: ['', [Validators.required, fechaNacimientoValida]],
-      posicion: this.fb.control<Posicion | ''>('', Validators.required),
-      // Opcional: si queda vacío, el backend no lo guarda.
-      club: ['', Validators.maxLength(50)],
-      descripcion: ['', [Validators.required, Validators.maxLength(200)]],
-      imagenPerfil: this.fb.control<File | null>(null, [Validators.required, imagenValida]),
-    },
-    { validators: contrasenasIguales },
-  );
-  protected readonly campos = this.form.controls;
 
   constructor() {
-    inject(DestroyRef).onDestroy(() => this.liberarVistaPrevia());
+    // El fondo muestra la cancha del club elegido solo mientras se completa el registro.
+    inject(DestroyRef).onDestroy(() => this.fondo.restablecer());
   }
 
-  protected elegirImagen(evento: Event): void {
-    const archivo = (evento.target as HTMLInputElement).files?.[0] ?? null;
-    this.campos.imagenPerfil.setValue(archivo);
-    this.campos.imagenPerfil.markAsTouched();
-    this.liberarVistaPrevia();
-    this.vistaPrevia.set(
-      archivo && this.campos.imagenPerfil.valid ? URL.createObjectURL(archivo) : null,
-    );
-  }
-
-  protected registrar(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    // Va como multipart/form-data porque incluye la imagen. "Repetir contraseña" solo se valida acá.
-    const { repetirContrasena: _, imagenPerfil, ...datos } = this.form.getRawValue();
-    const formulario = new FormData();
-    for (const [campo, valor] of Object.entries(datos)) formulario.append(campo, valor);
-    formulario.append('imagenPerfil', imagenPerfil!);
-
+  protected registrar(datos: FormData): void {
     this.enviando.set(true);
     this.auth
-      .registrar(formulario)
+      .registrar(datos)
       .pipe(finalize(() => this.enviando.set(false)))
       .subscribe({
         next: async (usuario) => {
@@ -99,11 +43,8 @@ export class Registro {
         },
         error: (error: unknown) => {
           const mensajes = mensajesDeError(error);
-          const campo = campoDelError(error);
           // Correo o nombre de usuario repetido: además del modal, se marca el campo.
-          if (campo === 'correo' || campo === 'nombreUsuario') {
-            this.campos[campo].setErrors({ servidor: mensajes[0] });
-          }
+          this.formulario().marcarError(campoDelError(error), mensajes[0]);
           void this.modal.abrir({
             tipo: 'error',
             titulo: 'No pudimos crear tu cuenta',
@@ -111,10 +52,5 @@ export class Registro {
           });
         },
       });
-  }
-
-  private liberarVistaPrevia(): void {
-    const url = this.vistaPrevia();
-    if (url) URL.revokeObjectURL(url);
   }
 }

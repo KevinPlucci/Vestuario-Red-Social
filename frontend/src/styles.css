@@ -17,7 +17,11 @@
   --color-exito: #1e6b3a;
   --color-exito-suave: #edf7f0;
   --radio: 10px;
-  --sombra: 0 1px 2px rgb(16 24 40 / 6%), 0 4px 14px rgb(16 24 40 / 5%);
+  --sombra: 0 2px 6px rgb(0 0 0 / 18%), 0 10px 26px rgb(0 0 0 / 16%);
+  /* Fondo: la cancha del club del jugador (la pone FondoService) o la cancha dibujada, con un velo
+     verde oscuro para que se lea todo lo que va encima. */
+  --fondo-imagen: url('/fondos/cancha.svg');
+  --velo-fondo: rgb(6 28 14 / 76%);
 }
 
 * {
@@ -36,7 +40,11 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: var(--color-texto);
-  background: var(--color-fondo);
+  background-color: #0e3a1c;
+  background-image: linear-gradient(var(--velo-fondo), var(--velo-fondo)), var(--fondo-imagen);
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 img {
@@ -83,6 +91,7 @@ p {
   padding: 24px;
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
+  border-top: 3px solid var(--color-primario);
   border-radius: var(--radio);
   box-shadow: var(--sombra);
 }
@@ -103,6 +112,44 @@ p {
 
 .cabecera-pagina h1 {
   margin-bottom: 4px;
+}
+
+/* Lo que va directo sobre el fondo (títulos de página, contadores, estados de carga): texto claro. */
+.cabecera-pagina,
+.sobre-fondo {
+  color: #fff;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 45%);
+}
+
+.cabecera-pagina .texto-suave,
+.sobre-fondo .texto-suave,
+.sobre-fondo.texto-suave {
+  color: rgb(255 255 255 / 84%);
+}
+
+/* Una línea de cal bajo el título de cada pantalla, como las de la cancha. */
+.cabecera-pagina h1::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: 10px;
+  background: rgb(255 255 255 / 85%);
+  border-radius: 2px;
+}
+
+/* Dentro de una tarjeta (ingresar, crear cuenta) la cabecera usa los colores normales. */
+.tarjeta .cabecera-pagina {
+  color: inherit;
+  text-shadow: none;
+}
+
+.tarjeta .cabecera-pagina .texto-suave {
+  color: var(--color-texto-suave);
+}
+
+.tarjeta .cabecera-pagina h1::after {
+  background: var(--color-primario);
 }
 
 .texto-suave {
@@ -308,4 +355,16 @@ a:focus-visible {
   .spinner {
     animation-duration: 2.4s;
   }
+}
+
+/* Acción destructiva (deshabilitar una cuenta). */
+.btn-peligro {
+  color: var(--color-error);
+  background: var(--color-superficie);
+  border-color: var(--color-error);
+}
+
+.btn-peligro:hover:not(:disabled) {
+  color: #fff;
+  background: var(--color-error);
 }

@@ -14,12 +14,13 @@ import { ModalService } from '../../core/services/modal.service';
 import { PublicacionesService } from '../../core/services/publicaciones.service';
 import { mensajesDeError } from '../../core/utils/errores';
 import { ErrorCampo } from '../../shared/components/error-campo';
+import { AutoAlturaDirective } from '../../shared/directives/auto-altura.directive';
 import { imagenValida, TIPOS_IMAGEN } from '../../shared/validators';
 
 /** Formulario para publicar: título, mensaje e imagen opcional. */
 @Component({
   selector: 'app-nueva-publicacion',
-  imports: [ReactiveFormsModule, ErrorCampo],
+  imports: [ReactiveFormsModule, ErrorCampo, AutoAlturaDirective],
   template: `
     <section class="tarjeta">
       <h2>Nueva publicación</h2>
@@ -35,6 +36,7 @@ import { imagenValida, TIPOS_IMAGEN } from '../../shared/validators';
           <label>
             <span>Mensaje</span>
             <textarea
+              appAutoAltura
               formControlName="mensaje"
               rows="3"
               maxlength="1000"

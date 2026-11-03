@@ -25,40 +25,54 @@ estadísticas de uso.
 El trabajo se entrega por sprints de una semana. Hoy están terminados el **sprint 1** (registro con foto de perfil,
 ingreso con correo o nombre de usuario y perfil propio), el **sprint 2** (publicar con imagen opcional, ver las
 publicaciones paginadas y ordenadas por fecha o por "Me gusta", dar y quitar "Me gusta", eliminar las propias y ver en
-el perfil las últimas tres con sus comentarios) y el **sprint 3**: sesión con token JWT de 15 minutos que se puede
+el perfil las últimas tres con sus comentarios), el **sprint 3** (sesión con token JWT de 15 minutos que se puede
 extender, pantalla de carga que valida el token, acceso solo con sesión, y la página de cada publicación con sus
-comentarios, que se pueden escribir, cargar de a poco y editar.
+comentarios, que se pueden escribir, cargar de a poco y editar) y el **sprint 4**: el administrador da de baja
+cualquier publicación, gestiona las cuentas en el dashboard de usuarios (alta con perfil, baja y alta lógica) y ve
+tres gráficos de estadísticas; además, la aplicación se puede instalar (PWA) y suma pipes y directivas propias.
+
+Con el sprint 4 también cambió la estética: el club se elige entre los 30 de la Liga Profesional, el fondo de la
+aplicación es la cancha del club de cada jugador y su escudo aparece, chiquito, junto a su nombre.
 
 ## 2. Perfiles
 
 | Perfil | Quién es | Qué puede hacer hoy |
 |---|---|---|
 | Visitante | Entra sin sesión | Solo ingresar o crear una cuenta. Cualquier otra pantalla lo lleva a *Ingresar* |
-| Usuario | Toda cuenta nueva | Publicar, dar y quitar "Me gusta", eliminar sus publicaciones, comentar, editar sus comentarios, ver sus datos y sus últimas publicaciones en *Mi perfil*, extender la sesión y cerrarla |
-| Administrador | Cuenta a la que se le cambió el perfil | Lo mismo que un usuario. La API ya le permite eliminar cualquier publicación; los botones para hacerlo desde la pantalla, el dashboard de usuarios y las estadísticas llegan en el sprint 4 |
+| Usuario | Toda cuenta que se registra | Publicar, dar y quitar "Me gusta", eliminar sus publicaciones, comentar, editar sus comentarios, ver sus datos y sus últimas publicaciones en *Mi perfil*, extender la sesión y cerrarla |
+| Administrador | Una cuenta creada como administradora desde el dashboard (o a la que se le cambió el perfil) | Lo mismo que un usuario y, además, eliminar cualquier publicación, crear cuentas de usuarios y de administradores, deshabilitar y volver a habilitar cuentas, y ver las estadísticas |
+| Cuenta deshabilitada | Una cuenta a la que un administrador le dio la baja lógica | Nada: no puede ingresar (el login le avisa que no está autorizado) y, si tenía la sesión abierta, se le cierra en el próximo pedido. Sus publicaciones y comentarios siguen a la vista |
 
 ## 3. Pantallas
 
 | Pantalla | Qué ofrece | Quién entra |
 |---|---|---|
 | Cargando | Spinner mientras se valida el token guardado. Si es válido sigue a la pantalla pedida; si venció, vuelve a *Ingresar* con un aviso. Si el servidor no responde, ofrece reintentar | Al abrir la aplicación con una sesión guardada |
-| Publicaciones | Formulario para publicar, selector de orden ("Más recientes" o "Más 'Me gusta'"), las publicaciones de a 5 con paginación y el rango que se está viendo ("Mostrando 1–5 de 12"). Cada publicación muestra autor y su posición, fecha, título, mensaje, imagen, "Me gusta", la cantidad de comentarios y, si es propia, el botón para eliminarla | Con sesión |
+| Publicaciones | El escudo y el estadio del club propio, formulario para publicar, selector de orden ("Más recientes" o "Más 'Me gusta'"), las publicaciones de a 5 con paginación y el rango que se está viendo ("Mostrando 1–5 de 12"). Cada publicación muestra autor con su posición y el escudo de su club, hace cuánto se publicó, título, mensaje, imagen, "Me gusta", la cantidad de comentarios y, si es propia (o si quien mira es administrador), el botón para eliminarla | Con sesión |
 | Publicación | La publicación en grande y sus comentarios: formulario para comentar, los más recientes primero de a 5, "Cargar más" y edición de los propios | Con sesión |
-| Mi perfil | Foto, nombre y apellido, nombre de usuario, posición, perfil, descripción, correo, club, fecha de nacimiento y fecha de alta, y las últimas 3 publicaciones propias, cada una con sus comentarios más recientes | Con sesión |
-| Crear cuenta | Formulario de registro con imagen de perfil y vista previa | Sin sesión |
+| Mi perfil | Foto, nombre y apellido, nombre de usuario, posición, el escudo del club, perfil, descripción, correo, club, fecha de nacimiento y fecha de alta, y las últimas 3 publicaciones propias, cada una con sus comentarios más recientes | Con sesión |
+| Usuarios (dashboard) | Formulario para crear cuentas (los datos del registro y el perfil, con botones de opción) y el listado de cuentas de a 10, con buscador, perfil, estado y el botón para deshabilitar o habilitar cada una | Administradores |
+| Estadísticas (dashboard) | El lapso (últimos 7, 30 o 90 días, o dos fechas a elección) y tres gráficos: publicaciones por usuario (barras), comentarios por día (líneas) y comentarios por publicación (torta). Cada gráfico se puede ver también como tabla | Administradores |
+| Crear cuenta | Formulario de registro con imagen de perfil y vista previa, y la lista de los 30 clubes: al elegir uno, de fondo aparece su cancha | Sin sesión |
 | Ingresar | Formulario con correo o nombre de usuario y contraseña | Sin sesión |
+| Créditos de las imágenes | Autor y licencia de cada foto de estadio y de cada escudo | Todos |
 | Página no encontrada | Aviso para direcciones que no existen, con un enlace a publicaciones | Todos |
 
-El encabezado está en todas las pantallas, en verde como el césped: con sesión lleva a Publicaciones y a Mi perfil y
-muestra la foto y el nombre de usuario con el botón para cerrar sesión; sin sesión, los accesos a ingresar y
-registrarse.
+El encabezado está en todas las pantallas, en verde como el césped: con sesión lleva a Publicaciones y a Mi perfil (y,
+para los administradores, a Usuarios y Estadísticas) y muestra la foto y el nombre de usuario con el botón para cerrar
+sesión; sin sesión, los accesos a ingresar y registrarse.
+
+De fondo, en todas las pantallas, está la cancha del club del jugador con un velo verde oscuro para que se lea lo que
+va encima. Sin sesión, sin club o con un club sin foto libre, se ve una cancha dibujada. Al pie, el nombre del estadio y
+el autor de la foto, con el enlace a los créditos.
 
 ## 4. Cómo se usa
 
 **Registro**
 
-1. El jugador completa el formulario, elige su posición (arquero, defensor, mediocampista o delantero), escribe su
-   club si quiere y elige su imagen de perfil, que se ve en un círculo antes de enviar.
+1. El jugador completa el formulario, elige su posición (arquero, defensor, mediocampista o delantero), elige su club
+   de la lista si quiere (al elegirlo, de fondo aparece su cancha y, junto al campo, su escudo) y elige su imagen de
+   perfil, que se ve en un círculo antes de enviar.
 2. Cada campo avisa su error apenas se sale de él, y al tocar *Crear cuenta* se marcan todos los que falten.
 3. Si el correo o el nombre de usuario ya existen, un modal lo explica y el campo queda marcado en rojo.
 4. Si todo está bien, se crea la cuenta con perfil "usuario", la sesión queda iniciada y un modal da la bienvenida.
@@ -69,7 +83,9 @@ registrarse.
 1. Se escribe el correo o el nombre de usuario (da igual mayúsculas o minúsculas) y la contraseña.
 2. Si las credenciales no coinciden, un modal avisa "Usuario o contraseña incorrectos." sin decir cuál de los dos
    falló.
-3. Si coinciden, se entra a Publicaciones con la sesión iniciada.
+3. Si coinciden pero la cuenta está deshabilitada, el modal "Tu cuenta está deshabilitada" avisa que no está autorizado
+   a ingresar y que se comunique con un administrador.
+4. Si coinciden y la cuenta está activa, se entra a Publicaciones con la sesión iniciada.
 
 **Sesión**
 
@@ -78,7 +94,8 @@ registrarse.
 - A los 10 minutos un modal avisa que quedan 5 y ofrece extenderla. *Extender sesión* da 15 minutos más; *Ahora no*
   deja que venza.
 - Si la sesión vence, o el servidor la rechaza en cualquier momento, se cierra y se vuelve a *Ingresar* con el aviso
-  "Tu sesión venció".
+  "Tu sesión venció". Si la rechaza porque un administrador deshabilitó la cuenta, el aviso es "Tu cuenta fue
+  deshabilitada".
 
 **Publicar**
 
@@ -110,8 +127,8 @@ registrarse.
 
 **Eliminar**
 
-- Solo las publicaciones propias muestran el botón para eliminar. Antes de borrar, un modal pide confirmación nombrando
-  la publicación.
+- Las publicaciones propias muestran el botón para eliminar y, para un administrador, todas. Antes de borrar, un modal
+  pide confirmación nombrando la publicación (y, si es ajena, a su autor).
 - La publicación deja de verse en el listado, en su página y en el perfil, junto con sus comentarios, pero queda
   guardada (baja lógica).
 
@@ -123,6 +140,34 @@ registrarse.
 
 **Cierre de sesión:** el botón del encabezado pide confirmación en un modal y después lleva a Ingresar.
 
+**Dashboard de usuarios (administradores)**
+
+1. *Crear usuario* abre el mismo formulario del registro con dos botones de opción más: perfil "Usuario" o
+   "Administrador". Al crearla, un modal lo confirma y la cuenta aparece en el listado; la sesión sigue siendo la del
+   administrador.
+2. El listado muestra las cuentas de a 10, de la más nueva a la más vieja, con foto, nombre, usuario, correo, posición,
+   club, perfil y estado. El buscador filtra por nombre, apellido, nombre de usuario o correo mientras se escribe.
+3. *Deshabilitar* pide confirmación y da la baja lógica: la cuenta queda marcada como deshabilitada y ya no puede
+   ingresar. *Habilitar* la vuelve a activar. La cuenta propia no tiene botón: un administrador no puede dejarse afuera.
+
+**Estadísticas (administradores)**
+
+1. Arriba se elige el lapso: los últimos 7, 30 (el de entrada) o 90 días, o *Elegir fechas* para poner un desde y un
+   hasta (como mucho un año). Los tres gráficos usan siempre el mismo lapso.
+2. *Publicaciones por usuario*: barras horizontales, de quien más publicó a quien menos.
+3. *Comentarios en el lapso*: el total, el promedio por día, el día con más y una línea con un punto por día (también
+   los días sin comentarios).
+4. *Comentarios por publicación*: una torta con las 4 publicaciones más comentadas y el resto juntas en "Otras", y al
+   lado la lista con la cantidad y el porcentaje de cada una. Cada título lleva a su publicación.
+5. Al pasar el puntero por un gráfico se ve el dato exacto. *Ver datos* cambia el gráfico por una tabla con todos los
+   valores (en la torta, todas las publicaciones, no solo las 4 primeras).
+
+**Instalar la aplicación (PWA)**
+
+- En el navegador del celular o de la computadora aparece la opción de instalar Vestuario: queda con su ícono, se abre
+  en su propia ventana y carga más rápido, porque guarda la aplicación y las imágenes. Para ver publicaciones nuevas
+  hace falta conexión.
+
 ## 5. Reglas de negocio
 
 | Dato | Regla |
@@ -133,10 +178,11 @@ registrarse.
 | Contraseña | Al menos 8 caracteres, una mayúscula y un número. Se pide dos veces y las dos tienen que coincidir |
 | Fecha de nacimiento | Obligatoria, no puede ser futura ni anterior a 1900 |
 | Posición | Obligatoria: arquero, defensor, mediocampista o delantero |
-| Club | Opcional, hasta 50 caracteres. Si se deja vacío, el perfil muestra "Sin club" |
+| Club | Opcional. Uno de los 30 clubes de la Liga Profesional 2026, elegido de la lista. Si se deja vacío, el perfil muestra "Sin club" |
 | Descripción breve | Obligatoria, hasta 200 caracteres, con un contador a la vista |
 | Imagen de perfil | Obligatoria. JPG, PNG, GIF o WEBP de hasta 2 MB |
-| Perfil | Toda cuenta nueva es "usuario". No se puede elegir al registrarse |
+| Perfil | Toda cuenta que se registra es "usuario" y no lo puede elegir. Un administrador, al crear una cuenta desde el dashboard, elige "usuario" o "administrador" |
+| Estado de la cuenta | Activa al crearse. Un administrador la deshabilita (baja lógica) y la vuelve a habilitar. Deshabilitada, no puede ingresar ni usar una sesión abierta. Un administrador no puede deshabilitar su propia cuenta |
 | Sesión | Dura 15 minutos desde que se emite el token. Extenderla da 15 minutos más desde ese momento |
 | Título de una publicación | Obligatorio, hasta 100 caracteres |
 | Mensaje de una publicación | Obligatorio, hasta 1000 caracteres, con contador a la vista |
@@ -146,6 +192,8 @@ registrarse.
 | Editar un comentario | Solo su autor (tampoco un administrador). Queda marcado como editado |
 | Eliminar una publicación | Solo el autor o un administrador. Es una baja lógica: deja de mostrarse junto con sus comentarios |
 | Listado | Solo publicaciones activas. Por fecha (la más nueva primero) o por cantidad de "Me gusta"; a igual cantidad, la más nueva primero |
+| Dashboards | Solo para administradores: un usuario que escribe la dirección vuelve a Publicaciones, y la API responde 403 |
+| Lapso de las estadísticas | Desde y hasta, con "desde" no posterior a "hasta" y como mucho un año entre los dos. Sin fechas, los últimos 30 días |
 
 Otras reglas:
 
@@ -250,28 +298,28 @@ Referencias: `[x]` implementado · `[ ]` pendiente.
 
 **Front**
 
-- [ ] El administrador puede dar de baja cualquier publicación (y sus comentarios dejan de estar disponibles)
-- [ ] Dashboard de usuarios, solo para administradores
-- [ ] Listado de usuarios
-- [ ] Alta de usuarios con los datos del registro y radio buttons para elegir "usuario" o "administrador"
-- [ ] Alta y baja lógica de usuarios; un usuario deshabilitado no puede ingresar y se le avisa en el login
-- [ ] Formulario de registro de nuevos usuarios
-- [ ] Dashboard de estadísticas con gráficos de distintos tipos y lapso de tiempo elegible:
-  - [ ] Publicaciones por usuario
-  - [ ] Comentarios realizados
-  - [ ] Comentarios por publicación
-- [ ] PWA
-- [ ] 3 pipes propios
-- [ ] 3 directivas propias
+- [x] El administrador puede dar de baja cualquier publicación (y sus comentarios dejan de estar disponibles)
+- [x] Dashboard de usuarios, solo para administradores (`/dashboard/usuarios`)
+- [x] Listado de usuarios
+- [x] Alta de usuarios con los datos del registro y radio buttons para elegir "usuario" o "administrador"
+- [x] Alta y baja lógica de usuarios; un usuario deshabilitado no puede ingresar y se le avisa en el login
+- [x] Formulario de registro de nuevos usuarios (el mismo componente del registro, `app-formulario-cuenta`)
+- [x] Dashboard de estadísticas (`/dashboard/estadisticas`) con gráficos de distintos tipos y lapso de tiempo elegible:
+  - [x] Publicaciones por usuario (barras)
+  - [x] Comentarios realizados (líneas, por día)
+  - [x] Comentarios por publicación (torta)
+- [x] PWA (instalable, con service worker y manifest)
+- [x] 3 pipes propios: `tiempoRelativo`, `nombrePosicion` y `plural`
+- [x] 3 directivas propias: `*appSoloAdmin`, `appImagenRespaldo` y `appAutoAltura`
 
 **Back**
 
-- [ ] Usuarios: listar, dar de alta y hacer bajas y altas lógicas, validando que el token sea de un administrador
-- [ ] `GET` listado de usuarios
-- [ ] `POST` alta de usuario con perfil elegible
-- [ ] `DELETE` deshabilitar usuario (al intentar ingresar se le avisa que no está autorizado)
-- [ ] `POST` rehabilitar usuario
-- [ ] Estadísticas: rutas `GET` para los gráficos, solo para administradores
+- [x] Usuarios: listar, dar de alta y hacer bajas y altas lógicas, validando que el token sea de un administrador
+- [x] `GET` listado de usuarios
+- [x] `POST` alta de usuario con perfil elegible
+- [x] `DELETE` deshabilitar usuario (al intentar ingresar se le avisa que no está autorizado)
+- [x] `POST` rehabilitar usuario
+- [x] Estadísticas: rutas `GET` para los gráficos, solo para administradores
 
 ### Sprint 5 (recuperatorio)
 
@@ -298,14 +346,18 @@ Puntos que la consigna no define y cómo se resolvieron:
 
 | Tema | Criterio |
 |---|---|
-| Temática | Red social de jugadores de fútbol. Se agregan dos datos al registro que la consigna no pide: la posición (obligatoria, para que cada jugador se presente en la cancha) y el club (opcional, porque muchos juegan sin club o entre amigos). La posición se ve junto al nombre en cada publicación. |
+| Temática | Red social de jugadores de fútbol. Se agregan dos datos al registro que la consigna no pide: la posición (obligatoria, para que cada jugador se presente en la cancha) y el club (opcional). La posición se ve junto al nombre en cada publicación, con el escudo del club. |
+| Club | Desde el sprint 4 se elige de una lista con los 30 clubes de la Liga Profesional 2026, en lugar de escribirlo: así cada club tiene su escudo y su cancha. Sigue siendo opcional, para quien juega sin club o entre amigos. Una cuenta vieja con un club escrito a mano lo sigue mostrando como texto, sin escudo. |
+| Fondo de la aplicación | La cancha del club del jugador, con un velo verde oscuro para que se lea todo. En el registro se ve la del club elegido apenas se lo elige. Sin sesión, sin club o con un club sin foto de licencia libre (Deportivo Riestra), una cancha dibujada. |
+| Imágenes de los clubes | Las fotos de los estadios y los escudos salen de Wikimedia Commons y Wikipedia, con licencias libres (Creative Commons o dominio público) salvo algún escudo que se usa como cita. Las licencias piden nombrar al autor: el pie de cada pantalla nombra el estadio y al autor de la foto, y la página *Créditos de las imágenes* lista todos. |
+| Datos de ejemplo | El backend trae un comando (`npm run sembrar`) que carga una cuenta administradora y 10 jugadores de la Liga Profesional con su nombre, fecha de nacimiento, posición y club reales (a noviembre de 2026), con publicaciones, comentarios y "Me gusta" repartidos en los últimos 30 días para que las estadísticas tengan datos. Son cuentas de demostración: las publicaciones y los comentarios son inventados y las fotos de perfil son siluetas con los colores de cada club, no fotos de los jugadores. |
 | Correo o nombre de usuario para ingresar | Se aceptan los dos en el mismo campo. Los dos son únicos, así que cualquiera identifica a la cuenta. Como el nombre de usuario no admite `@`, un texto con `@` siempre es un correo. |
 | Mayúsculas | Correo y nombre de usuario se guardan en minúsculas: `Ana`, `ana` y `ANA` son la misma cuenta. La contraseña sí distingue mayúsculas. |
 | Campos obligatorios | Todos los del registro, incluidas la imagen de perfil y la descripción breve: la consigna los lista sin marcar ninguno como opcional (a diferencia de la imagen de las publicaciones, que dice "opcional"). El club es el único opcional, porque no está en la consigna. |
 | Imagen de perfil | JPG, PNG, GIF o WEBP de hasta 2 MB. El formato se comprueba por el contenido del archivo, no por su extensión. |
 | Fecha de nacimiento | Sin edad mínima: la consigna no la pide. Solo se rechazan fechas futuras o anteriores a 1900. |
 | Repetir contraseña | Se compara en la pantalla. Al servidor viaja una sola vez. |
-| Cambio de perfil | No se elige al registrarse: si el formulario manda un perfil, se ignora. Por ahora se cambia con un comando del backend (`npm run perfil`). Desde el sprint 4 lo hace un administrador en el dashboard. |
+| Cambio de perfil | No se elige al registrarse: si el formulario manda un perfil, se ignora. Un administrador elige el perfil al crear una cuenta desde el dashboard. El de una cuenta que ya existe se cambia con un comando del backend (`npm run perfil`), porque la consigna no pide hacerlo desde la pantalla. |
 | Después de registrarse | La sesión queda iniciada, sin pedir que ingrese de nuevo: el registro devuelve el token igual que el login. |
 | Acceso a las pantallas | Desde el sprint 3 todas las pantallas piden sesión, salvo *Ingresar*, *Crear cuenta* y la página 404. Con la sesión iniciada, *Ingresar* y *Crear cuenta* llevan a Publicaciones. |
 | Token | Se devuelve en el cuerpo de la respuesta (no en cookies) y el front lo guarda en `localStorage`, para que la sesión sobreviva a recargar la página. Viaja en el header `Authorization: Bearer <token>`. |
@@ -320,7 +372,17 @@ Puntos que la consigna no define y cómo se resolvieron:
 | "Me gusta" a una publicación propia | Se permite: la consigna no lo prohíbe. |
 | Quitar un "Me gusta" que no se dio | La API responde 404 (ese "Me gusta" no existe). Dar uno repetido responde 409. |
 | Eliminar | Pide confirmación. La publicación no se borra de la base (baja lógica) y no hay forma de recuperarla desde la aplicación. Sus comentarios dejan de poder verse, escribirse y editarse. |
-| Administrador | La API ya le deja eliminar publicaciones ajenas; el botón en pantalla para hacerlo llega en el sprint 4, como pide la consigna. |
+| Administrador y publicaciones | Ve el botón para eliminar en todas las publicaciones; la confirmación aclara que es ajena y de quién. No puede editar comentarios ajenos. |
+| Cuenta deshabilitada | El login responde que no está autorizado a ingresar (y el modal lo dice con ese título). Si la cuenta tenía la sesión abierta, el servidor la rechaza en el próximo pedido aunque el token no haya vencido, y la aplicación vuelve al login con el aviso "Tu cuenta fue deshabilitada". Sus publicaciones y comentarios siguen a la vista: la consigna solo le quita el acceso. |
+| Deshabilitarse a uno mismo | No se puede: el administrador se quedaría afuera. En el listado, la cuenta propia dice "Tu cuenta" en lugar del botón. |
+| Alta de cuentas desde el dashboard | Usa el mismo formulario del registro (el mismo componente), más el perfil. No inicia sesión con la cuenta nueva: el administrador sigue con la suya. |
+| Estadísticas: lapso | Uno solo para los tres gráficos, elegido arriba: últimos 7, 30 o 90 días (los días se cuentan enteros, desde las 0 h del primero) o dos fechas a elección. Como mucho un año, para que los gráficos sigan siendo legibles. |
+| Estadísticas: qué se cuenta | Publicaciones por usuario cuenta también las que después se dieron de baja, porque se hicieron en el lapso. Comentarios por día usa la hora de Argentina y muestra los días sin comentarios en 0. Comentarios por publicación no cuenta las publicaciones dadas de baja, porque sus comentarios ya no están disponibles. |
+| Estadísticas: tipos de gráfico | Barras para comparar cuánto publicó cada uno, líneas para ver cómo cambian los comentarios con los días y torta para ver qué parte del total se llevó cada publicación, como pide la consigna (tipos distintos). La torta muestra las 4 más comentadas y junta el resto en "Otras", porque con muchas porciones no se lee; la tabla tiene todas. |
+| Estadísticas: colores | El verde de Vestuario y tres colores más, elegidos para que se distingan también con daltonismo. Cada publicación conserva su color en la torta al cambiar el lapso, si sigue entre las primeras. Los datos nunca dependen solo del color: la lista de la torta y la tabla *Ver datos* dicen todos los valores. |
+| Pipes propios | `tiempoRelativo` ("recién", "hace 5 min", "hace 3 h", "ayer", "hace 4 días" y, de una semana en adelante, la fecha: "12 oct 2026"; al pasar el puntero se ve la fecha y hora exactas), `nombrePosicion` (`mediocampista` → "Mediocampista") y `plural` (`3 \| plural: 'comentario'` → "3 comentarios"). |
+| Directivas propias | `*appSoloAdmin` (muestra lo que envuelve solo a los administradores: los accesos a los dashboards), `appImagenRespaldo` (si una foto de perfil no carga, pone una silueta) y `appAutoAltura` (los cuadros de texto crecen a medida que se escribe). |
+| PWA | Se instala desde el navegador y guarda la aplicación y las imágenes ya vistas para abrir más rápido. Los datos (publicaciones, comentarios) siempre se piden al servidor, porque tienen que estar al día y llevan la sesión. Solo funciona en el build de producción. |
 | Comentarios por carga | 5 por vez en la página de la publicación. Si alguien comenta mientras tanto, *Cargar más* no repite los que ya se ven. |
 | Editar comentarios | Solo el autor, ni siquiera un administrador (la consigna habla de "los comentarios propios"). Siempre queda marcado como editado, aunque el texto no cambie. Los comentarios no se eliminan: la consigna no lo pide. |
 | Comentarios en Mi perfil | Se muestran los 3 más recientes de cada publicación y un enlace a su página para ver todos y comentar. |

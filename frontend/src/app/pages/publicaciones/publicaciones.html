@@ -3,6 +3,12 @@
     <h1>Publicaciones</h1>
     <p class="texto-suave">
       Hola, {{ auth.usuario()?.nombre }}. Esto es lo último que se habló en el vestuario.
+      @if (fondo.club(); as club) {
+        <span class="club-fondo"
+          ><app-escudo-club [club]="club.id" [conNombre]="true" [tamano]="20" /> ·
+          {{ club.estadio }}</span
+        >
+      }
     </p>
   </div>
 
@@ -28,12 +34,14 @@
       </button>
     </div>
     @if (rango(); as r) {
-      <span class="texto-suave">Mostrando {{ r.desde }}–{{ r.hasta }} de {{ r.total }}</span>
+      <span class="sobre-fondo texto-suave"
+        >Mostrando {{ r.desde }}–{{ r.hasta }} de {{ r.total }}</span
+      >
     }
   </div>
 
   @if (cargando() && !listado()) {
-    <div class="estado">
+    <div class="estado sobre-fondo">
       <span class="spinner" aria-hidden="true"></span>
       <p class="texto-suave">Cargando publicaciones...</p>
     </div>
@@ -53,6 +61,7 @@
         }
       </div>
       <app-paginacion
+        class="sobre-fondo"
         [pagina]="pagina()"
         [totalPaginas]="totalPaginas()"
         (cambiar)="cambiarPagina($event)"

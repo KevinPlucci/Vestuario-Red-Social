@@ -1,0 +1,308 @@
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* ---------- Lapso ---------- */
+
+.filtros {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-block: 16px;
+}
+
+.lapsos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lapso {
+  min-height: 36px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+}
+
+.lapso:hover:not(.elegido) {
+  background: var(--color-fondo);
+}
+
+.lapso.elegido {
+  color: #fff;
+  background: var(--color-primario);
+  border-color: var(--color-primario);
+}
+
+.lapso:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+.fechas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.fechas label > span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.fechas input {
+  padding: 7px 10px;
+  font: inherit;
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+}
+
+.filtros .error-texto,
+.lapso-actual {
+  margin: 0;
+}
+
+.lapso-actual {
+  font-size: 0.9rem;
+}
+
+/* ---------- Tarjetas ---------- */
+
+.tableros {
+  display: grid;
+  gap: 20px;
+  transition: opacity 0.15s;
+}
+
+/* Mientras llegan los datos del lapso nuevo, los gráficos anteriores quedan atenuados. */
+.tableros.actualizando {
+  opacity: 0.55;
+}
+
+.titulo-tarjeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+}
+
+.titulo-tarjeta h2 {
+  margin-bottom: 4px;
+}
+
+.titulo-tarjeta p {
+  max-width: 560px;
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.btn-chico {
+  min-height: 34px;
+  padding: 5px 12px;
+  font-size: 0.9rem;
+}
+
+.sin-datos {
+  margin: 0;
+  padding: 24px 0;
+  text-align: center;
+}
+
+.nota {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+}
+
+/* Las cifras del lapso arriba del gráfico de líneas. */
+.cifras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin: 0 0 16px;
+}
+
+.cifras dt {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.cifras dd {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.cifras dd .texto-suave {
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+/* ---------- Torta y leyenda ---------- */
+
+.torta {
+  display: grid;
+  align-items: center;
+  gap: 16px 28px;
+}
+
+@media (min-width: 640px) {
+  .torta {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+}
+
+.dona {
+  position: relative;
+}
+
+/* El total en el hueco de la torta. */
+.centro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  margin: 0;
+  text-align: center;
+  pointer-events: none;
+}
+
+.centro strong {
+  font-size: 1.7rem;
+  line-height: 1.1;
+}
+
+.centro span {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.leyenda {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.leyenda li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.leyenda li:last-child {
+  border-bottom: 0;
+}
+
+.muestra {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  transform: translateY(1px);
+}
+
+.nombre {
+  overflow-wrap: anywhere;
+}
+
+/* Los títulos llevan a la publicación, pero en el color del texto: el color es de la porción, no del texto. */
+.leyenda a,
+td a {
+  color: var(--color-texto);
+  text-decoration-color: var(--color-texto-suave);
+  text-underline-offset: 3px;
+}
+
+.leyenda a:hover,
+td a:hover {
+  color: var(--color-primario-oscuro);
+}
+
+.nombre .texto-suave {
+  margin-left: 4px;
+  font-size: 0.85rem;
+}
+
+.valor {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.valor .texto-suave {
+  display: inline-block;
+  min-width: 3.2em;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+/* ---------- Tablas ("Ver datos") ---------- */
+
+.tabla-desplazable {
+  max-height: 360px;
+  overflow: auto;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  font-size: 0.92rem;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+  background: var(--color-fondo);
+}
+
+td .texto-suave {
+  margin-left: 4px;
+  font-size: 0.85rem;
+}
+
+.numero {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.estado {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 24px 0;
+}

@@ -21,7 +21,7 @@ const DATOS = {
   contrasena: 'Segura123',
   fechaNacimiento: '1998-04-15',
   posicion: 'Delantero',
-  club: '  Club Atlético Banfield  ',
+  club: '  banfield  ',
   descripcion: 'Nueve de área, zurda y cabezazo.',
 };
 
@@ -110,9 +110,10 @@ describe('Autenticación (e2e)', () => {
         correo: 'ana.perez@example.com',
         nombreUsuario: 'anap',
         posicion: 'delantero',
-        club: 'Club Atlético Banfield',
+        club: 'banfield',
         descripcion: 'Nueve de área, zurda y cabezazo.',
         perfil: 'usuario',
+        activo: true,
       });
       expect(body.usuario.id).toMatch(/^[a-f\d]{24}$/);
       expect(body.usuario.fechaNacimiento).toBe('1998-04-15T00:00:00.000Z');
@@ -157,6 +158,18 @@ describe('Autenticación (e2e)', () => {
       });
       expect(status).toBe(201);
       expect(body.usuario).not.toHaveProperty('club');
+    });
+
+    it('400 si el club no es uno de los 30 de la Liga Profesional', async () => {
+      const { status, body } = await registrar({
+        correo: 'otroclub@example.com',
+        nombreUsuario: 'otroclub',
+        club: 'Club Atlético Banfield',
+      });
+      expect(status).toBe(400);
+      expect(body.message).toEqual([
+        'El club tiene que ser uno de los 30 de la Liga Profesional.',
+      ]);
     });
 
     it('409 si el correo ya está registrado', async () => {
@@ -233,7 +246,7 @@ describe('Autenticación (e2e)', () => {
         'La contraseña es obligatoria.',
         'La fecha de nacimiento no puede ser futura.',
         'La posición es obligatoria.',
-        'El club no puede superar los 50 caracteres.',
+        'El club tiene que ser uno de los 30 de la Liga Profesional.',
         'La descripción es obligatoria.',
       ]);
     });

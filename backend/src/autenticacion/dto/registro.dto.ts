@@ -17,6 +17,7 @@ import {
   recortarYMinusculas,
   textoOpcional,
 } from '../../comun/transformaciones';
+import { CLUBES, type Club } from '../../usuarios/clubes';
 import {
   POSICIONES,
   type Posicion,
@@ -84,11 +85,12 @@ export class RegistroDto {
   @Transform(recortarYMinusculas)
   posicion: Posicion;
 
-  @MaxLength(50, { message: 'El club no puede superar los 50 caracteres.' })
-  @IsString({ message: 'El club tiene que ser un texto.' })
+  @IsIn(CLUBES, {
+    message: 'El club tiene que ser uno de los 30 de la Liga Profesional.',
+  })
   @IsOptional()
   @Transform(textoOpcional)
-  club?: string;
+  club?: Club;
 
   @MaxLength(200, {
     message: 'La descripción no puede superar los 200 caracteres.',

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { invitadoGuard, sesionGuard } from './core/guards/sesion.guards';
+import { adminGuard, invitadoGuard, sesionGuard } from './core/guards/sesion.guards';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'publicaciones' },
@@ -37,6 +37,26 @@ export const routes: Routes = [
     title: 'Mi perfil · Vestuario',
     canActivate: [sesionGuard],
     loadComponent: () => import('./pages/mi-perfil/mi-perfil').then((m) => m.MiPerfil),
+  },
+  {
+    path: 'dashboard/usuarios',
+    title: 'Usuarios · Vestuario',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/dashboard/dashboard-usuarios').then((m) => m.DashboardUsuarios),
+  },
+  {
+    path: 'dashboard/estadisticas',
+    title: 'Estadísticas · Vestuario',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/dashboard/dashboard-estadisticas').then((m) => m.DashboardEstadisticas),
+  },
+  { path: 'dashboard', pathMatch: 'full', redirectTo: 'dashboard/usuarios' },
+  {
+    path: 'creditos',
+    title: 'Créditos de las imágenes · Vestuario',
+    loadComponent: () => import('./pages/creditos/creditos').then((m) => m.Creditos),
   },
   {
     path: '**',

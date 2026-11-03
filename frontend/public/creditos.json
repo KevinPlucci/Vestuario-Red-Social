@@ -1,0 +1,533 @@
+[
+ {
+  "club": "aldosivi",
+  "tipo": "escudo",
+  "archivo": "Aldosivi logo.svg",
+  "autor": "Desconocido",
+  "licencia": "Fair use",
+  "urlLicencia": "",
+  "fuente": "https://en.wikipedia.org/wiki/File:Aldosivi_logo.svg"
+ },
+ {
+  "club": "aldosivi",
+  "tipo": "estadio",
+  "archivo": "José-María-Minella-Stadium present.JPG",
+  "autor": "Nachomdqcor",
+  "licencia": "CC BY-SA 3.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/3.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Jos%C3%A9-Mar%C3%ADa-Minella-Stadium_present.JPG"
+ },
+ {
+  "club": "argentinos-juniors",
+  "tipo": "escudo",
+  "archivo": "Asociación_Atlética_Argentinos_Juniors_logo.svg",
+  "autor": "Asociación Atlética Argentinos Juniors",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Asociaci%C3%B3n_Atl%C3%A9tica_Argentinos_Juniors_logo.svg"
+ },
+ {
+  "club": "argentinos-juniors",
+  "tipo": "estadio",
+  "archivo": "Argentinos Juniors Stadium.jpg",
+  "autor": "https://www.flickr.com/photos/yonolatengo/5546734895/",
+  "licencia": "CC BY 2.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by/2.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Argentinos_Juniors_Stadium.jpg"
+ },
+ {
+  "club": "atletico-tucuman",
+  "tipo": "escudo",
+  "archivo": "Atletico_tucuman_nuevo2.svg",
+  "autor": "Club Atlético Tucumán",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Atletico_tucuman_nuevo2.svg"
+ },
+ {
+  "club": "atletico-tucuman",
+  "tipo": "estadio",
+  "archivo": "Estadio_Monumental_José_Fierro_01.jpg",
+  "autor": "Jmmuguerza",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_Monumental_Jos%C3%A9_Fierro_01.jpg"
+ },
+ {
+  "club": "banfield",
+  "tipo": "escudo",
+  "archivo": "Banfield_2022.png",
+  "autor": "Club Atlético Banfield",
+  "licencia": "CC BY-SA 3.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/3.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Banfield_2022.png"
+ },
+ {
+  "club": "banfield",
+  "tipo": "estadio",
+  "archivo": "The Estadio Florencio Sola during a match between Banfield and Platense (2023).jpg",
+  "autor": "Vincenzo.togni",
+  "licencia": "CC BY 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:The_Estadio_Florencio_Sola_during_a_match_between_Banfield_and_Platense_(2023).jpg"
+ },
+ {
+  "club": "barracas-central",
+  "tipo": "escudo",
+  "archivo": "Barracas_central_logo.svg",
+  "autor": "DesconocidoUnknown author",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Barracas_central_logo.svg"
+ },
+ {
+  "club": "barracas-central",
+  "tipo": "estadio",
+  "archivo": "Estadio_barracas_central_1922.jpg",
+  "autor": "Unknown",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_barracas_central_1922.jpg"
+ },
+ {
+  "club": "belgrano",
+  "tipo": "escudo",
+  "archivo": "Club_Atlético_Belgrano_2026.svg",
+  "autor": "DesconocidoUnknown author (presumably for Club Atlético Belgrano)",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Club_Atl%C3%A9tico_Belgrano_2026.svg"
+ },
+ {
+  "club": "belgrano",
+  "tipo": "estadio",
+  "archivo": "Gigante_de_alberdi.jpg",
+  "autor": "TheProxy18",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Gigante_de_alberdi.jpg"
+ },
+ {
+  "club": "boca-juniors",
+  "tipo": "escudo",
+  "archivo": "Boca_Juniors_logo_2026.svg",
+  "autor": "Club Atlético Boca Juniors",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Boca_Juniors_logo_2026.svg"
+ },
+ {
+  "club": "boca-juniors",
+  "tipo": "estadio",
+  "archivo": "Vista_aérea_del_Estadio_Alberto_J._Armando_\"La_Bombonera\"_01.jpg",
+  "autor": "ProtoplasmaKid",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Vista_a%C3%A9rea_del_Estadio_Alberto_J._Armando_%22La_Bombonera%22_01.jpg"
+ },
+ {
+  "club": "central-cordoba",
+  "tipo": "escudo",
+  "archivo": "Central_Cordoba_SdE_crest_(2025).svg",
+  "autor": "DesconocidoUnknown author",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Central_Cordoba_SdE_crest_(2025).svg"
+ },
+ {
+  "club": "central-cordoba",
+  "tipo": "estadio",
+  "archivo": "Estadio_Único_Madre_de_Ciudades_(Este).jpg",
+  "autor": "Gergas",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_%C3%9Anico_Madre_de_Ciudades_(Este).jpg"
+ },
+ {
+  "club": "defensa-y-justicia",
+  "tipo": "escudo",
+  "archivo": "Escudo_del_Club_Social_y_Deportivo_Defensa_y_Justicia.svg",
+  "autor": "Defensa y Justicia",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_Social_y_Deportivo_Defensa_y_Justicia.svg"
+ },
+ {
+  "club": "defensa-y-justicia",
+  "tipo": "estadio",
+  "archivo": "Norberto_Tomaghello.jpg",
+  "autor": "Ignacio Her11",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Norberto_Tomaghello.jpg"
+ },
+ {
+  "club": "deportivo-riestra",
+  "tipo": "escudo",
+  "archivo": "Escudo_del_Club_Deportivo_Riestra.svg",
+  "autor": "DesconocidoUnknown author",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_Deportivo_Riestra.svg"
+ },
+ {
+  "club": "estudiantes-lp",
+  "tipo": "escudo",
+  "archivo": "Estudiantes_de_la_Plata_crest_(2025).svg",
+  "autor": "DesconocidoUnknown author",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estudiantes_de_la_Plata_crest_(2025).svg"
+ },
+ {
+  "club": "estudiantes-lp",
+  "tipo": "estadio",
+  "archivo": "UNO_20220614_210130.jpg",
+  "autor": "Germanramos2",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:UNO_20220614_210130.jpg"
+ },
+ {
+  "club": "gimnasia-mendoza",
+  "tipo": "escudo",
+  "archivo": "Escudo Club Gimnasia y Esgrima Mendoza.svg",
+  "autor": "Unknown (Vector graphics image by Trandos)",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_Club_Gimnasia_y_Esgrima_Mendoza.svg"
+ },
+ {
+  "club": "gimnasia-mendoza",
+  "tipo": "estadio",
+  "archivo": "Panorámica_lateral_del_Estadio_Víctor_Legrotaglie_(2017).jpg",
+  "autor": "Ozaru's Photos (Iván Aguilar)",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Panor%C3%A1mica_lateral_del_Estadio_V%C3%ADctor_Legrotaglie_(2017).jpg"
+ },
+ {
+  "club": "huracan",
+  "tipo": "escudo",
+  "archivo": "Emblema_oficial_del_Club_Atlético_Huracán.svg",
+  "autor": "Club Atlético Huracán",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Emblema_oficial_del_Club_Atl%C3%A9tico_Hurac%C3%A1n.svg"
+ },
+ {
+  "club": "huracan",
+  "tipo": "estadio",
+  "archivo": "Estadio duco huracan.jpg",
+  "autor": "Unknown",
+  "licencia": "CC BY 2.5 ar",
+  "urlLicencia": "https://creativecommons.org/licenses/by/2.5/ar/deed.en",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_duco_huracan.jpg"
+ },
+ {
+  "club": "independiente",
+  "tipo": "escudo",
+  "archivo": "Escudo_del_Club_Atlético_Independiente.svg",
+  "autor": "Club Atlético Independiente",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_Atl%C3%A9tico_Independiente.svg"
+ },
+ {
+  "club": "independiente",
+  "tipo": "estadio",
+  "archivo": "Estadio_Libertadores_de_America_2014.JPG",
+  "autor": "AlexRojo93",
+  "licencia": "CC BY-SA 3.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/3.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_Libertadores_de_America_2014.JPG"
+ },
+ {
+  "club": "independiente-rivadavia",
+  "tipo": "escudo",
+  "archivo": "Escudo_del_Club_Independiente_Rivadavia.svg",
+  "autor": "Unknown (Vector graphics by Trandos)",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_Independiente_Rivadavia.svg"
+ },
+ {
+  "club": "independiente-rivadavia",
+  "tipo": "estadio",
+  "archivo": "UNCUECO_24.JPG",
+  "autor": "Gonce",
+  "licencia": "CC BY-SA 3.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/3.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:UNCUECO_24.JPG"
+ },
+ {
+  "club": "instituto",
+  "tipo": "escudo",
+  "archivo": "Escudo_Instituto_Atletico_Central_Cordoba.png",
+  "autor": "Instituto Alético Central Córdoba",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_Instituto_Atletico_Central_Cordoba.png"
+ },
+ {
+  "club": "instituto",
+  "tipo": "estadio",
+  "archivo": "Estadio alta cordoba cropped.jpg",
+  "autor": "Javier Zengaro",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_alta_cordoba_cropped.jpg"
+ },
+ {
+  "club": "lanus",
+  "tipo": "escudo",
+  "archivo": "Escudo_de_Lanús_(sin_estrellas).svg",
+  "autor": "DesconocidoUnknown author",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_de_Lan%C3%BAs_(sin_estrellas).svg"
+ },
+ {
+  "club": "lanus",
+  "tipo": "estadio",
+  "archivo": "Hinchada_del_Club_Lanús.jpg",
+  "autor": "1915CAL",
+  "licencia": "CC BY 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Hinchada_del_Club_Lan%C3%BAs.jpg"
+ },
+ {
+  "club": "newells",
+  "tipo": "escudo",
+  "archivo": "Escudo_del_Club_Atlético_Newell's_Old_Boys_de_Rosario.svg",
+  "autor": "Estudio Shakespear",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_Atl%C3%A9tico_Newell%27s_Old_Boys_de_Rosario.svg"
+ },
+ {
+  "club": "newells",
+  "tipo": "estadio",
+  "archivo": "ColosoDelParque.jpg",
+  "autor": "Juanmanob",
+  "licencia": "CC0",
+  "urlLicencia": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fuente": "https://commons.wikimedia.org/wiki/File:ColosoDelParque.jpg"
+ },
+ {
+  "club": "racing-club",
+  "tipo": "escudo",
+  "archivo": "Escudo_de_Racing_Club_(2014).svg",
+  "autor": "Racing Club de Avellaneda",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_de_Racing_Club_(2014).svg"
+ },
+ {
+  "club": "racing-club",
+  "tipo": "estadio",
+  "archivo": "Estadio_Presidente_Peron.jpg",
+  "autor": "Sentencia Gráfica Estudio",
+  "licencia": "CC0",
+  "urlLicencia": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_Presidente_Peron.jpg"
+ },
+ {
+  "club": "river-plate",
+  "tipo": "escudo",
+  "archivo": "Club_Atlético_River_Plate_logo.svg",
+  "autor": "Club Atlético River Plate",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Club_Atl%C3%A9tico_River_Plate_logo.svg"
+ },
+ {
+  "club": "river-plate",
+  "tipo": "estadio",
+  "archivo": "Estadio_mas_monumental.jpg",
+  "autor": "Dibumartinez23",
+  "licencia": "CC0",
+  "urlLicencia": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_mas_monumental.jpg"
+ },
+ {
+  "club": "rosario-central",
+  "tipo": "escudo",
+  "archivo": "Escudo_Rosario_Central.png",
+  "autor": "DesconocidoUnknown author",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_Rosario_Central.png"
+ },
+ {
+  "club": "rosario-central",
+  "tipo": "estadio",
+  "archivo": "2009_Argentina-Brasil_en_el_Gigante.jpg",
+  "autor": "Rodrigo Accurcio from São Paulo, Brasil",
+  "licencia": "CC BY 2.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by/2.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:2009_Argentina-Brasil_en_el_Gigante.jpg"
+ },
+ {
+  "club": "san-lorenzo",
+  "tipo": "escudo",
+  "archivo": "Escudo_del_Club_Atlético_San_Lorenzo_de_Almagro.svg",
+  "autor": "Unknown (Vector graphics by Trandos)",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_Atl%C3%A9tico_San_Lorenzo_de_Almagro.svg"
+ },
+ {
+  "club": "san-lorenzo",
+  "tipo": "estadio",
+  "archivo": "Platea_Este_Nuevo_Gasometro_1.jpg",
+  "autor": "Nicocuervo95",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Platea_Este_Nuevo_Gasometro_1.jpg"
+ },
+ {
+  "club": "sarmiento",
+  "tipo": "escudo",
+  "archivo": "Escudo_del_Club_Atlético_Sarmiento_de_Junín.svg",
+  "autor": "Club Atlético Sarmiento",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_Atl%C3%A9tico_Sarmiento_de_Jun%C3%ADn.svg"
+ },
+ {
+  "club": "sarmiento",
+  "tipo": "estadio",
+  "archivo": "Estadio Eva Peron Club Sarmiento de Junin 2.jpg",
+  "autor": "Paolazaccardi",
+  "licencia": "CC0",
+  "urlLicencia": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_Eva_Peron_Club_Sarmiento_de_Junin_2.jpg"
+ },
+ {
+  "club": "talleres",
+  "tipo": "escudo",
+  "archivo": "Escudo_Talleres_2015.svg",
+  "autor": "Talleres",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_Talleres_2015.svg"
+ },
+ {
+  "club": "talleres",
+  "tipo": "estadio",
+  "archivo": "Estadio Mario Alberto Kempes en el entretiempo de Belgrano - River.jpg",
+  "autor": "Alepizarro32",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_Mario_Alberto_Kempes_en_el_entretiempo_de_Belgrano_-_River.jpg"
+ },
+ {
+  "club": "union",
+  "tipo": "escudo",
+  "archivo": "Escudo_club_Atlético_Unión_de_santa_fe.svg",
+  "autor": "Club Atlético Uniónm de Santa Fe",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_club_Atl%C3%A9tico_Uni%C3%B3n_de_santa_fe.svg"
+ },
+ {
+  "club": "union",
+  "tipo": "estadio",
+  "archivo": "Estadio_15_de_Abril_-_Club_Atlético_Unión_de_Santa_Fe_-_30.jpg",
+  "autor": "TitiNicola",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_15_de_Abril_-_Club_Atl%C3%A9tico_Uni%C3%B3n_de_Santa_Fe_-_30.jpg"
+ },
+ {
+  "club": "velez-sarsfield",
+  "tipo": "escudo",
+  "archivo": "Escudo_del_Club_Atlético_Vélez_Sarsfield.svg",
+  "autor": "Trandos",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_Atl%C3%A9tico_V%C3%A9lez_Sarsfield.svg"
+ },
+ {
+  "club": "velez-sarsfield",
+  "tipo": "estadio",
+  "archivo": "Estadio_José_Amalfitani_2024.jpg",
+  "autor": "Gonzabar77",
+  "licencia": "CC0",
+  "urlLicencia": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_Jos%C3%A9_Amalfitani_2024.jpg"
+ },
+ {
+  "club": "estudiantes-rc",
+  "tipo": "escudo",
+  "archivo": "Escudo_Asociacion_Atlética_Estudiantes_de_Río_Cuarto.svg",
+  "autor": "Marcelo Lopez Tobares",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_Asociacion_Atl%C3%A9tica_Estudiantes_de_R%C3%ADo_Cuarto.svg"
+ },
+ {
+  "club": "estudiantes-rc",
+  "tipo": "estadio",
+  "archivo": "Estadio Candini.png",
+  "autor": "AtlasFederal",
+  "licencia": "CC0",
+  "urlLicencia": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_Candini.png"
+ },
+ {
+  "club": "gimnasia-lp",
+  "tipo": "escudo",
+  "archivo": "Escudo_del_Club_de_Gimnasia_y_Esgrima_La_Plata_(v2026).svg",
+  "autor": "Emilio Coutaret",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_de_Gimnasia_y_Esgrima_La_Plata_(v2026).svg"
+ },
+ {
+  "club": "gimnasia-lp",
+  "tipo": "estadio",
+  "archivo": "Museo Tripero - Estadio Juan Carmelo Zerillo. 31.JPG",
+  "autor": "Gelpgim22 (Sergio Moises Panei Pitrau)",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Museo_Tripero_-_Estadio_Juan_Carmelo_Zerillo._31.JPG"
+ },
+ {
+  "club": "platense",
+  "tipo": "escudo",
+  "archivo": "Club_Altético_Platense_crest_(2025).svg",
+  "autor": "DesconocidoUnknown author",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Club_Alt%C3%A9tico_Platense_crest_(2025).svg"
+ },
+ {
+  "club": "platense",
+  "tipo": "estadio",
+  "archivo": "Estadio de platense tribuna y campo.jpg",
+  "autor": "Fernando Martello",
+  "licencia": "CC BY-SA 4.0",
+  "urlLicencia": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Estadio_de_platense_tribuna_y_campo.jpg"
+ },
+ {
+  "club": "tigre",
+  "tipo": "escudo",
+  "archivo": "Escudo del Club Atlético Tigre.svg",
+  "autor": "Unknown (Vector graphics image by Trandos)",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Escudo_del_Club_Atl%C3%A9tico_Tigre.svg"
+ },
+ {
+  "club": "tigre",
+  "tipo": "estadio",
+  "archivo": "Tigre estadio tribuna peron.jpg",
+  "autor": "DesconocidoUnknown author",
+  "licencia": "Public domain",
+  "urlLicencia": "",
+  "fuente": "https://commons.wikimedia.org/wiki/File:Tigre_estadio_tribuna_peron.jpg"
+ }
+]

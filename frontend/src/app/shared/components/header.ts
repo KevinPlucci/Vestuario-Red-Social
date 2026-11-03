@@ -2,10 +2,12 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ModalService } from '../../core/services/modal.service';
+import { ImagenRespaldoDirective } from '../directives/imagen-respaldo.directive';
+import { SoloAdminDirective } from '../directives/solo-admin.directive';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, ImagenRespaldoDirective, SoloAdminDirective],
   template: `
     <header>
       <div class="contenedor barra">
@@ -17,8 +19,12 @@ import { ModalService } from '../../core/services/modal.service';
           @if (auth.usuario(); as usuario) {
             <a routerLink="/publicaciones" routerLinkActive="activo">Publicaciones</a>
             <a routerLink="/mi-perfil" routerLinkActive="activo">Mi perfil</a>
+            <ng-container *appSoloAdmin>
+              <a routerLink="/dashboard/usuarios" routerLinkActive="activo">Usuarios</a>
+              <a routerLink="/dashboard/estadisticas" routerLinkActive="activo">Estadísticas</a>
+            </ng-container>
             <a routerLink="/mi-perfil" class="usuario" title="Ver mi perfil">
-              <img class="avatar" [src]="usuario.imagenPerfil" alt="" />
+              <img class="avatar" [src]="usuario.imagenPerfil" alt="" appImagenRespaldo />
               <span>{{ '@' + usuario.nombreUsuario }}</span>
             </a>
             <button type="button" class="btn btn-claro" (click)="cerrarSesion()">

@@ -8,7 +8,7 @@ import { Model, PipelineStage, Types } from 'mongoose';
 import { esIdValido } from '../comun/ids';
 import type { UsuarioDocument } from '../usuarios/schemas/usuario.schema';
 import { ComentarioDto } from './dto/comentario.dto';
-import { PaginacionDto } from './dto/paginacion.dto';
+import { PaginacionDto } from '../comun/paginacion.dto';
 import { PublicacionesService } from './publicaciones.service';
 import { Comentario } from './schemas/comentario.schema';
 import { DATOS_AUTOR, UNIR_AUTOR, VistaComentario } from './vistas';

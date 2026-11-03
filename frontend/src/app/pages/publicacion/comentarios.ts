@@ -7,6 +7,7 @@ import { PublicacionesService } from '../../core/services/publicaciones.service'
 import { mensajesDeError } from '../../core/utils/errores';
 import { ComentarioItem, LARGO_COMENTARIO } from '../../shared/components/comentario';
 import { ErrorCampo } from '../../shared/components/error-campo';
+import { AutoAlturaDirective } from '../../shared/directives/auto-altura.directive';
 
 /** Comentarios que se piden por vez. */
 const POR_CARGA = 5;
@@ -14,7 +15,7 @@ const POR_CARGA = 5;
 /** Comentarios de una publicación: formulario para comentar y lista con "Cargar más". */
 @Component({
   selector: 'app-comentarios',
-  imports: [ReactiveFormsModule, ErrorCampo, ComentarioItem],
+  imports: [ReactiveFormsModule, ErrorCampo, ComentarioItem, AutoAlturaDirective],
   template: `
     <section class="tarjeta">
       <h2>Comentarios ({{ total() }})</h2>
@@ -24,6 +25,7 @@ const POR_CARGA = 5;
           <label>
             <span>Tu comentario</span>
             <textarea
+              appAutoAltura
               formControlName="mensaje"
               rows="2"
               [maxlength]="largo"

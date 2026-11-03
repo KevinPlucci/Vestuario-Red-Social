@@ -3,39 +3,55 @@ import { Component, computed, inject, input, linkedSignal, output, signal } from
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { Publicacion } from '../../core/models/publicacion';
-import { NOMBRES_POSICION } from '../../core/models/usuario';
 import { AuthService } from '../../core/services/auth.service';
 import { ModalService } from '../../core/services/modal.service';
 import { PublicacionesService } from '../../core/services/publicaciones.service';
 import { mensajesDeError } from '../../core/utils/errores';
+import { ImagenRespaldoDirective } from '../directives/imagen-respaldo.directive';
+import { NombrePosicionPipe } from '../pipes/nombre-posicion.pipe';
+import { PluralPipe } from '../pipes/plural.pipe';
+import { TiempoRelativoPipe } from '../pipes/tiempo-relativo.pipe';
+import { EscudoClub } from './escudo-club';
 
 /**
- * Una publicación: autor, contenido, "Me gusta", acceso a sus comentarios y, si es propia, el
- * botón para eliminarla. En modo detalle se muestra en grande y sin el enlace a su página.
+ * Una publicación: autor, contenido, "Me gusta", acceso a sus comentarios y, si es propia o quien
+ * mira es administrador, el botón para darla de baja. En modo detalle se muestra en grande y sin el
+ * enlace a su página.
  */
 @Component({
   selector: 'app-tarjeta-publicacion',
-  imports: [DatePipe, RouterLink],
+  imports: [
+    DatePipe,
+    RouterLink,
+    EscudoClub,
+    ImagenRespaldoDirective,
+    NombrePosicionPipe,
+    PluralPipe,
+    TiempoRelativoPipe,
+  ],
   template: `
     @let pub = publicacion();
     <article class="tarjeta" [class.grande]="detalle()">
       <header>
-        <img class="avatar" [src]="pub.usuario.imagenPerfil" alt="" />
+        <img class="avatar" [src]="pub.usuario.imagenPerfil" alt="" appImagenRespaldo />
         <div class="autor">
           <strong>
             {{ pub.usuario.nombre }} {{ pub.usuario.apellido }}
-            @if (pub.usuario.posicion; as posicion) {
-              <span class="etiqueta">{{ posiciones[posicion] }}</span>
+            @if (pub.usuario.posicion) {
+              <span class="etiqueta">{{ pub.usuario.posicion | nombrePosicion }}</span>
             }
+            <app-escudo-club [club]="pub.usuario.club" [tamano]="16" />
           </strong>
           <span class="texto-suave">
             {{ '@' + pub.usuario.nombreUsuario }} ·
-            <time [attr.datetime]="pub.createdAt">{{
-              pub.createdAt | date: 'd MMM y, HH:mm'
-            }}</time>
+            <time
+              [attr.datetime]="pub.createdAt"
+              [title]="pub.createdAt | date: 'd MMM y, HH:mm'"
+              >{{ pub.createdAt | tiempoRelativo }}</time
+            >
           </span>
         </div>
-        @if (esMia()) {
+        @if (puedeEliminar()) {
           <button
             type="button"
             class="eliminar"
@@ -82,7 +98,7 @@ import { mensajesDeError } from '../../core/utils/errores';
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
           </svg>
-          {{ meGusta().cantidadMeGusta }} Me gusta
+          {{ meGusta().cantidadMeGusta | plural: 'Me gusta' : 'Me gusta' }}
         </button>
         @if (!detalle()) {
           <a class="accion" [routerLink]="['/publicaciones', pub.id]">
@@ -91,8 +107,7 @@ import { mensajesDeError } from '../../core/utils/errores';
                 d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-8l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"
               />
             </svg>
-            {{ pub.cantidadComentarios }}
-            {{ pub.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
+            {{ pub.cantidadComentarios | plural: 'comentario' }}
           </a>
         }
       </footer>
@@ -239,10 +254,13 @@ export class TarjetaPublicacion {
   private readonly servicio = inject(PublicacionesService);
   private readonly modal = inject(ModalService);
 
-  protected readonly posiciones = NOMBRES_POSICION;
   protected readonly ocupado = signal(false);
   protected readonly esMia = computed(
     () => this.auth.usuario()?.id === this.publicacion().usuario.id,
+  );
+  /** El autor da de baja las suyas; un administrador, cualquiera (sprint 4). */
+  protected readonly puedeEliminar = computed(
+    () => this.esMia() || this.auth.usuario()?.perfil === 'administrador',
   );
   /** Arranca con lo que trae la publicación y se actualiza con cada respuesta de la API. */
   protected readonly meGusta = linkedSignal(() => ({
@@ -268,10 +286,12 @@ export class TarjetaPublicacion {
   }
 
   protected async eliminar(): Promise<void> {
-    const { id, titulo } = this.publicacion();
+    const { id, titulo, usuario } = this.publicacion();
     const confirmado = await this.modal.confirmar({
       titulo: 'Eliminar publicación',
-      mensaje: `¿Querés eliminar "${titulo}"? Va a dejar de verse en el vestuario.`,
+      mensaje: this.esMia()
+        ? `¿Querés eliminar "${titulo}"? Va a dejar de verse en el vestuario.`
+        : `Como administrador vas a dar de baja "${titulo}", de @${usuario.nombreUsuario}. Ni la publicación ni sus comentarios van a estar disponibles.`,
       textoAceptar: 'Eliminar',
     });
     if (!confirmado) return;

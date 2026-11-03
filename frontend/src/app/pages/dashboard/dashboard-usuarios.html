@@ -1,0 +1,113 @@
+<div class="cabecera-pagina">
+  <h1>Usuarios</h1>
+  <p class="texto-suave">
+    Las cuentas de Vestuario: alta de usuarios y administradores, y baja o alta lógica.
+  </p>
+</div>
+
+<section class="tarjeta alta">
+  <div class="titulo-seccion">
+    <h2>Nueva cuenta</h2>
+    <button
+      type="button"
+      class="btn btn-secundario"
+      [attr.aria-expanded]="mostrarAlta()"
+      (click)="mostrarAlta.set(!mostrarAlta())"
+    >
+      {{ mostrarAlta() ? 'Cerrar' : 'Crear usuario' }}
+    </button>
+  </div>
+  @if (mostrarAlta()) {
+    <p class="texto-suave">
+      Los mismos datos del registro. Con los botones de perfil elegís si la cuenta es de un usuario
+      o de un administrador.
+    </p>
+    <app-formulario-cuenta
+      [elegirPerfil]="true"
+      [enviando]="creando()"
+      textoEnviar="Crear usuario"
+      textoEnviando="Creando usuario..."
+      (enviar)="crear($event)"
+    />
+  }
+</section>
+
+<section class="tarjeta">
+  <div class="titulo-seccion">
+    <h2>
+      Cuentas
+      @if (listado(); as l) {
+        <span class="texto-suave">({{ l.total }})</span>
+      }
+    </h2>
+    <label class="buscar">
+      <span class="oculto">Buscar cuentas</span>
+      <input
+        type="search"
+        placeholder="Buscar por nombre, usuario o correo"
+        [value]="buscar()"
+        (input)="buscarCuenta($event)"
+      />
+    </label>
+  </div>
+
+  @if (error(); as mensajes) {
+    <div class="vacio">
+      <h3>No se pudo cargar el listado</h3>
+      @for (mensaje of mensajes; track $index) {
+        <p class="texto-suave">{{ mensaje }}</p>
+      }
+      <button type="button" class="btn btn-primario" (click)="recargar()">Reintentar</button>
+    </div>
+  } @else if (listado(); as l) {
+    <ul class="cuentas" [class.actualizando]="cargando()">
+      @for (u of l.usuarios; track u.id) {
+        <li class="cuenta" [class.inactiva]="u.activo === false">
+          <img class="avatar" [src]="u.imagenPerfil" alt="" appImagenRespaldo />
+          <div class="datos">
+            <strong>{{ u.nombre }} {{ u.apellido }}</strong>
+            <span class="texto-suave">{{ '@' + u.nombreUsuario }} · {{ u.correo }}</span>
+            <span class="detalle">
+              {{ u.posicion | nombrePosicion }} ·
+              <app-escudo-club [club]="u.club" [conNombre]="true" [tamano]="16" />
+            </span>
+          </div>
+          <div class="marcas">
+            <span class="etiqueta" [class.admin]="u.perfil === 'administrador'">{{
+              u.perfil === 'administrador' ? 'Administrador' : 'Usuario'
+            }}</span>
+            <span class="etiqueta" [class.baja]="u.activo === false">{{
+              u.activo === false ? 'Deshabilitada' : 'Activa'
+            }}</span>
+          </div>
+          @if (u.id === auth.usuario()?.id) {
+            <span class="texto-suave propia">Tu cuenta</span>
+          } @else {
+            <button
+              type="button"
+              class="btn"
+              [class.btn-peligro]="u.activo !== false"
+              [class.btn-primario]="u.activo === false"
+              [disabled]="ocupado() === u.id"
+              (click)="cambiarEstado(u)"
+            >
+              {{ u.activo === false ? 'Habilitar' : 'Deshabilitar' }}
+            </button>
+          }
+        </li>
+      } @empty {
+        <li class="sin-resultados texto-suave">No hay cuentas que coincidan con la búsqueda.</li>
+      }
+    </ul>
+    <app-paginacion
+      [pagina]="pagina()"
+      [totalPaginas]="totalPaginas()"
+      (cambiar)="pagina.set($event)"
+    />
+  } @else {
+    <div class="estado">
+      <span class="spinner" aria-hidden="true"></span>
+      <p class="texto-suave">Cargando cuentas...</p>
+    </div>
+  }
+</section>

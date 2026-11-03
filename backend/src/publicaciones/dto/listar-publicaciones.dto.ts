@@ -1,5 +1,5 @@
 import { IsIn, IsMongoId, IsOptional } from 'class-validator';
-import { PaginacionDto } from './paginacion.dto';
+import { PaginacionDto } from '../../comun/paginacion.dto';
 
 export const ORDENES = ['fecha', 'meGusta'] as const;
 export type Orden = (typeof ORDENES)[number];

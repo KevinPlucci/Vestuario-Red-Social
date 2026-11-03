@@ -1,13 +1,14 @@
 import { effect, inject, Injectable } from '@angular/core';
+import { textoDuracion } from '../utils/duracion';
 import { mensajesDeError } from '../utils/errores';
 import { AuthService } from './auth.service';
 import { ModalService } from './modal.service';
 
-/** El aviso aparece 5 minutos antes de que venza el token, o sea, a los 10 de sesión. */
-const AVISO_ANTES_MS = 5 * 60 * 1000;
+/** El aviso aparece cuando queda un tercio de la sesión: con tokens de 15 minutos, a los 10 (quedan 5). */
+const avisoAntesDe = (duracion: number) => duracion / 3;
 
 /**
- * Vigila el vencimiento del token: avisa cuando quedan 5 minutos y ofrece extender la sesión
+ * Vigila el vencimiento del token: avisa cuando queda un tercio de la sesión y ofrece extenderla
  * (refrescar el token). Si no se extiende, al vencer cierra la sesión y vuelve al login.
  */
 @Injectable({ providedIn: 'root' })
@@ -19,9 +20,13 @@ export class VencimientoSesion {
     // Cada token nuevo (login, registro o refresco) reprograma los dos temporizadores.
     effect((onCleanup) => {
       const vence = this.auth.vencimiento();
-      if (!vence) return;
+      const duracion = this.auth.duracion();
+      if (!vence || !duracion) return;
       const faltan = vence - Date.now();
-      const aviso = setTimeout(() => void this.avisar(vence), faltan - AVISO_ANTES_MS);
+      const aviso = setTimeout(
+        () => void this.avisar(vence, duracion),
+        faltan - avisoAntesDe(duracion),
+      );
       const fin = setTimeout(() => void this.auth.expulsar(), faltan);
       onCleanup(() => {
         clearTimeout(aviso);
@@ -30,11 +35,10 @@ export class VencimientoSesion {
     });
   }
 
-  private async avisar(vence: number): Promise<void> {
-    const minutos = Math.max(1, Math.round((vence - Date.now()) / 60_000));
+  private async avisar(vence: number, duracion: number): Promise<void> {
     const extender = await this.modal.confirmar({
       titulo: 'Tu sesión está por vencer',
-      mensaje: `Quedan ${minutos} ${minutos === 1 ? 'minuto' : 'minutos'} de sesión. ¿Querés extenderla 15 minutos más?`,
+      mensaje: `Quedan ${textoDuracion(vence - Date.now())} de sesión. ¿Querés extenderla ${textoDuracion(duracion)} más?`,
       textoAceptar: 'Extender sesión',
       textoCancelar: 'Ahora no',
     });
@@ -46,7 +50,7 @@ export class VencimientoSesion {
         void this.modal.abrir({
           tipo: 'exito',
           titulo: 'Sesión extendida',
-          mensaje: 'Tenés 15 minutos más.',
+          mensaje: `Tenés ${textoDuracion(duracion)} más.`,
         }),
       error: (error: unknown) =>
         void this.modal.abrir({

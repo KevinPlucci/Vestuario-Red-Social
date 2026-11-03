@@ -4,9 +4,12 @@ import { Router } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Sesion, Usuario } from '../models/usuario';
+import { textoDuracion } from '../utils/duracion';
 import { ModalService } from './modal.service';
 
 const CLAVE_SESION = 'vestuario.sesion';
+/** Motivo con el que la API acompaña los errores de una cuenta deshabilitada. */
+export const CUENTA_DESHABILITADA = 'cuenta-deshabilitada';
 
 function leerSesionGuardada(): Sesion | null {
   try {
@@ -17,12 +20,14 @@ function leerSesionGuardada(): Sesion | null {
   }
 }
 
-/** Momento (en ms) en que vence el token, leído del "exp" de su payload. */
-function vencimientoDe(token: string): number | null {
+/** Emisión y vencimiento del token (en ms), leídos del "iat" y el "exp" de su payload. */
+function tiemposDe(token: string): { emitido: number; vence: number } | null {
   try {
     const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-    const { exp } = JSON.parse(atob(payload)) as { exp?: unknown };
-    return typeof exp === 'number' ? exp * 1000 : null;
+    const { iat, exp } = JSON.parse(atob(payload)) as { iat?: unknown; exp?: unknown };
+    return typeof iat === 'number' && typeof exp === 'number'
+      ? { emitido: iat * 1000, vence: exp * 1000 }
+      : null;
   } catch {
     return null;
   }
@@ -44,9 +49,16 @@ export class AuthService {
   readonly token = computed(() => this.sesion()?.token ?? null);
   readonly haySesion = computed(() => this.sesion() !== null);
   readonly sesionConfirmada = this.confirmada.asReadonly();
-  readonly vencimiento = computed(() => {
+  private readonly tiempos = computed(() => {
     const token = this.token();
-    return token ? vencimientoDe(token) : null;
+    return token ? tiemposDe(token) : null;
+  });
+  /** Momento (en ms) en que vence el token. */
+  readonly vencimiento = computed(() => this.tiempos()?.vence ?? null);
+  /** Cuánto dura cada token (en ms). Lo decide el servidor: se lee del token, no está escrito acá. */
+  readonly duracion = computed(() => {
+    const tiempos = this.tiempos();
+    return tiempos ? tiempos.vence - tiempos.emitido : null;
   });
 
   /** Recibe un FormData porque viaja junto con la imagen de perfil (multipart/form-data). */
@@ -73,7 +85,7 @@ export class AuthService {
     );
   }
 
-  /** Cambia el token por uno nuevo con 15 minutos más de vida. */
+  /** Cambia el token por uno nuevo, con toda su duración desde ahora. */
   refrescar(): Observable<void> {
     return this.http.post<{ token: string }>(`${this.url}/refrescar`, null).pipe(
       map(({ token }) => {
@@ -89,14 +101,27 @@ export class AuthService {
     this.confirmada.set(false);
   }
 
-  /** El token venció o la API lo rechazó: se cierra la sesión, se vuelve al login y se avisa. */
-  async expulsar(): Promise<void> {
+  /**
+   * El token venció o la API lo rechazó: se cierra la sesión, se vuelve al login y se avisa por qué
+   * (sesión vencida o cuenta deshabilitada por un administrador).
+   */
+  async expulsar(motivo?: string): Promise<void> {
     if (!this.haySesion()) return;
+    const duracion = this.duracion();
     this.cerrarSesion();
     await this.router.navigateByUrl('/login');
+    if (motivo === CUENTA_DESHABILITADA) {
+      void this.modal.abrir({
+        tipo: 'error',
+        titulo: 'Tu cuenta fue deshabilitada',
+        mensaje:
+          'Un administrador deshabilitó tu cuenta. Comunicate con él para volver a ingresar.',
+      });
+      return;
+    }
     void this.modal.abrir({
       titulo: 'Tu sesión venció',
-      mensaje: 'Por seguridad, la sesión dura 15 minutos. Ingresá de nuevo para seguir.',
+      mensaje: `Por seguridad, la sesión dura ${duracion ? textoDuracion(duracion) : 'un tiempo limitado'}. Ingresá de nuevo para seguir.`,
     });
   }
 

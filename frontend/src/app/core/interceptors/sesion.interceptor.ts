@@ -17,7 +17,8 @@ export const sesionInterceptor: HttpInterceptorFn = (pedido, siguiente) => {
   return siguiente(pedido.clone({ setHeaders: { Authorization: `Bearer ${token}` } })).pipe(
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse && error.status === 401) {
-        void auth.expulsar();
+        // La API indica el motivo cuando un administrador deshabilitó la cuenta.
+        void auth.expulsar((error.error as { motivo?: string } | null)?.motivo);
         return EMPTY;
       }
       return throwError(() => error);

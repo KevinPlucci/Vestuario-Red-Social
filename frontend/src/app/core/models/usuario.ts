@@ -21,8 +21,11 @@ export interface Usuario {
   descripcion: string;
   imagenPerfil: string;
   posicion: Posicion;
+  /** Identificador de uno de los 30 clubes de CLUBES (no viene si no tiene). */
   club?: string;
   perfil: Perfil;
+  /** false si un administrador deshabilitó la cuenta. */
+  activo: boolean;
   createdAt: string;
   updatedAt: string;
 }

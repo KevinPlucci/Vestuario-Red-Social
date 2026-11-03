@@ -83,7 +83,8 @@ import { Component, computed, input, output } from '@angular/core';
       display: inline-block;
       min-width: 24px;
       text-align: center;
-      color: var(--color-texto-suave);
+      /* Hereda el color: claro sobre el fondo (publicaciones), oscuro dentro de una tarjeta (dashboard). */
+      color: inherit;
     }
   `,
 })

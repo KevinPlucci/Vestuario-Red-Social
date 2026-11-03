@@ -7,23 +7,38 @@ import { AuthService } from '../../core/services/auth.service';
 import { ModalService } from '../../core/services/modal.service';
 import { PublicacionesService } from '../../core/services/publicaciones.service';
 import { mensajesDeError } from '../../core/utils/errores';
+import { AutoAlturaDirective } from '../directives/auto-altura.directive';
+import { ImagenRespaldoDirective } from '../directives/imagen-respaldo.directive';
+import { TiempoRelativoPipe } from '../pipes/tiempo-relativo.pipe';
 import { ErrorCampo } from './error-campo';
+import { EscudoClub } from './escudo-club';
 
 export const LARGO_COMENTARIO = 500;
 
 /** Un comentario: autor, fecha, marca de editado y, si es propio, la edición en el lugar. */
 @Component({
   selector: 'app-comentario',
-  imports: [DatePipe, ReactiveFormsModule, ErrorCampo],
+  imports: [
+    DatePipe,
+    ReactiveFormsModule,
+    ErrorCampo,
+    EscudoClub,
+    AutoAlturaDirective,
+    ImagenRespaldoDirective,
+    TiempoRelativoPipe,
+  ],
   template: `
     @let c = datos();
     <article class="comentario">
-      <img class="avatar" [src]="c.usuario.imagenPerfil" alt="" />
+      <img class="avatar" [src]="c.usuario.imagenPerfil" alt="" appImagenRespaldo />
       <div class="cuerpo">
         <p class="autor">
           <strong>{{ c.usuario.nombre }} {{ c.usuario.apellido }}</strong>
+          <app-escudo-club [club]="c.usuario.club" [tamano]="14" />
           <span class="texto-suave">
-            <time [attr.datetime]="c.createdAt">{{ c.createdAt | date: 'd MMM y, HH:mm' }}</time>
+            <time [attr.datetime]="c.createdAt" [title]="c.createdAt | date: 'd MMM y, HH:mm'">{{
+              c.createdAt | tiempoRelativo
+            }}</time>
             @if (c.modificado) {
               · editado
             }
@@ -37,7 +52,12 @@ export const LARGO_COMENTARIO = 500;
             <div class="campo">
               <label>
                 <span class="oculto">Editar comentario</span>
-                <textarea formControlName="mensaje" rows="2" [maxlength]="largo"></textarea>
+                <textarea
+                  appAutoAltura
+                  formControlName="mensaje"
+                  rows="2"
+                  [maxlength]="largo"
+                ></textarea>
               </label>
               <app-error-campo [control]="form.controls.mensaje" />
             </div>

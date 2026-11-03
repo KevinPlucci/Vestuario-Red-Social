@@ -9,6 +9,8 @@ export interface Autor {
   nombreUsuario: string;
   imagenPerfil: string;
   posicion: Posicion;
+  /** Identificador del club (no viene si no tiene). */
+  club?: string;
 }
 
 export interface VistaPublicacion {
@@ -55,4 +57,5 @@ export const DATOS_AUTOR = {
   nombreUsuario: '$autor.nombreUsuario',
   imagenPerfil: '$autor.imagenPerfil',
   posicion: '$autor.posicion',
+  club: '$autor.club',
 };

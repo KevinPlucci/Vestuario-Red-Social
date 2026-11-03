@@ -8,6 +8,8 @@ export interface Autor {
   nombreUsuario: string;
   imagenPerfil: string;
   posicion?: Posicion;
+  /** Identificador del club (no viene si no tiene). */
+  club?: string;
 }
 
 export interface Publicacion {

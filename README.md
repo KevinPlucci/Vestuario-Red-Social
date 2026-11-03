@@ -9,7 +9,7 @@ Hecha con **Angular 21** en el frontend y **NestJS 11** con **MongoDB** en el ba
 | **Frontend** | <https://plaza-red-social.vercel.app> |
 | **Backend** | <https://red-social-api-95af.onrender.com> |
 | **Repositorio** | <https://github.com/KevinPlucci/Vestuario-Red-Social> |
-| **Estado** | Sprints 1, 2 y 3 terminados |
+| **Estado** | Sprints 1, 2, 3 y 4 terminados |
 
 ## Documentación
 
@@ -21,7 +21,9 @@ Hecha con **Angular 21** en el frontend y **NestJS 11** con **MongoDB** en el ba
 ## Qué hace
 
 - Registro con nombre, apellido, correo, nombre de usuario, contraseña, fecha de nacimiento, posición en la cancha,
-  club (opcional), descripción breve e imagen de perfil, con validaciones y mensajes en cada campo.
+  club (opcional, uno de los 30 de la Liga Profesional), descripción breve e imagen de perfil, con validaciones y
+  mensajes en cada campo.
+- De fondo, la cancha del club de cada jugador, y su escudo chiquito junto a su nombre.
 - Ingreso con el correo o con el nombre de usuario. La sesión es un token JWT que dura 15 minutos: a los 10 aparece
   un aviso para extenderla y, si vence, se vuelve al login.
 - Solo se entra a la aplicación con la sesión iniciada. Al abrirla, una pantalla de carga valida el token.
@@ -31,14 +33,24 @@ Hecha con **Angular 21** en el frontend y **NestJS 11** con **MongoDB** en el ba
   propios, que quedan marcados como editados.
 - Dar y quitar "Me gusta", y eliminar las publicaciones propias (baja lógica).
 - Perfil propio con la foto, todos los datos de la cuenta y las últimas 3 publicaciones con sus comentarios.
-- Perfiles "usuario" (por defecto) y "administrador".
+- Perfiles "usuario" (por defecto) y "administrador". El administrador elimina cualquier publicación, crea cuentas
+  de usuarios y administradores, las deshabilita o las vuelve a habilitar (una cuenta deshabilitada no puede ingresar)
+  y ve tres gráficos de estadísticas (barras, líneas y torta) en el lapso que elija.
+- Se puede instalar como aplicación (PWA).
 - Avisos y confirmaciones en modales, sin `alert()`.
+
+## Para probar
+
+`npm run sembrar` (en `backend`) carga datos de ejemplo: la cuenta administradora **`admin` / `Admin2026`** y 10
+jugadores de la Liga Profesional (por ejemplo `lparedes` o `gmontiel`, con la contraseña `Vestuario2026`), con
+publicaciones, comentarios y "Me gusta" de los últimos 30 días. Son cuentas de demostración: los nombres, posiciones y
+clubes son reales, pero las publicaciones y los comentarios son inventados.
 
 ## Stack
 
 | Capa | Tecnología |
 |---|---|
-| Frontend | Angular 21 (standalone, signals, formularios reactivos, sin zone.js) |
+| Frontend | Angular 21 (standalone, signals, formularios reactivos, sin zone.js), Chart.js y PWA con `@angular/service-worker` |
 | Backend | NestJS 11 con Mongoose, class-validator, bcrypt y JWT (`@nestjs/jwt`) |
 | Base de datos | MongoDB (Atlas en producción) |
 | Hosting | Vercel (frontend) y Render (backend) |
@@ -58,5 +70,6 @@ En `backend/.env` hay que poner la cadena de conexión de MongoDB (`MONGODB_URI`
 |---|---|---|
 | `npm run start:dev` | backend | API con recarga automática en el puerto 3000 |
 | `npm test` | backend | Pruebas e2e de la API |
+| `npm run sembrar` | backend | Datos de ejemplo: la cuenta `admin` y 10 jugadores con publicaciones y comentarios |
 | `npm start` | frontend | Servidor de desarrollo en el puerto 4200 |
 | `npm run build` | frontend | Build de producción en `dist/frontend/browser` |

@@ -106,3 +106,8 @@ app-comentario + app-comentario {
   margin-top: 10px;
   font-weight: 600;
 }
+
+.etiqueta.club {
+  display: inline-flex;
+  align-items: center;
+}

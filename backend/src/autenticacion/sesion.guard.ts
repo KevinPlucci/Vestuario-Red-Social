@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 import type { UsuarioDocument } from '../usuarios/schemas/usuario.schema';
 import { UsuariosService } from '../usuarios/usuarios.service';
+import { CUENTA_DESHABILITADA } from './cuenta-deshabilitada';
 import type { DatosToken } from './token';
 
 export type PedidoConUsuario = Request & {
@@ -48,6 +49,15 @@ export class SesionGuard implements CanActivate {
       throw new UnauthorizedException(
         'Tu sesión venció o no es válida. Ingresá de nuevo.',
       );
+    }
+    // Un token emitido antes de la baja deja de servir en el próximo pedido.
+    if (usuario.activo === false) {
+      throw new UnauthorizedException({
+        statusCode: 401,
+        error: 'Unauthorized',
+        message: 'Tu cuenta fue deshabilitada por un administrador.',
+        motivo: CUENTA_DESHABILITADA,
+      });
     }
     pedido.usuario = usuario;
     pedido.token = datos;

@@ -13,7 +13,7 @@ import { UsuarioActual } from '../autenticacion/usuario-actual.decorator';
 import type { UsuarioDocument } from '../usuarios/schemas/usuario.schema';
 import { ComentariosService } from './comentarios.service';
 import { ComentarioDto } from './dto/comentario.dto';
-import { PaginacionDto } from './dto/paginacion.dto';
+import { PaginacionDto } from '../comun/paginacion.dto';
 
 /** Comentarios de una publicación: listar, agregar y editar los propios. Todo con sesión. */
 @Controller('publicaciones/:id/comentarios')

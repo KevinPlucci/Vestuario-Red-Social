@@ -1,0 +1,291 @@
+<div class="cabecera-pagina">
+  <h1>Estadísticas</h1>
+  <p class="texto-suave">
+    Publicaciones y comentarios de Vestuario en el lapso que elijas. Los tres gráficos usan el mismo
+    lapso.
+  </p>
+</div>
+
+<section class="tarjeta filtros" aria-labelledby="titulo-lapso">
+  <h2 id="titulo-lapso" class="oculto">Lapso</h2>
+  <div class="lapsos" role="group" aria-label="Lapso de las estadísticas">
+    @for (opcion of lapsos; track opcion.valor) {
+      <button
+        type="button"
+        class="lapso"
+        [class.elegido]="lapso() === opcion.valor"
+        [attr.aria-pressed]="lapso() === opcion.valor"
+        (click)="elegirLapso(opcion.valor)"
+      >
+        {{ opcion.texto }}
+      </button>
+    }
+  </div>
+
+  @if (lapso() === 'fechas') {
+    <form class="fechas" novalidate (submit)="aplicarFechas($event)">
+      <label>
+        <span>Desde</span>
+        <input
+          type="date"
+          [value]="desde()"
+          [max]="hasta() || hoy"
+          (input)="cambiarFecha('desde', $event)"
+        />
+      </label>
+      <label>
+        <span>Hasta</span>
+        <input
+          type="date"
+          [value]="hasta()"
+          [min]="desde()"
+          [max]="hoy"
+          (input)="cambiarFecha('hasta', $event)"
+        />
+      </label>
+      <button type="submit" class="btn btn-primario">Aplicar</button>
+    </form>
+    @if (errorFechas(); as mensaje) {
+      <p class="error-texto" role="alert">{{ mensaje }}</p>
+    }
+  }
+
+  <p class="texto-suave lapso-actual">
+    Del {{ rango().desde | date: "d 'de' MMMM" }} al
+    {{ rango().hasta | date: "d 'de' MMMM 'de' y" }}
+    @if (cargando()) {
+      <span class="cargando-texto">· actualizando...</span>
+    }
+  </p>
+</section>
+
+@if (error(); as mensajes) {
+  <section class="tarjeta vacio">
+    <h2>No se pudieron cargar las estadísticas</h2>
+    @for (mensaje of mensajes; track $index) {
+      <p class="texto-suave">{{ mensaje }}</p>
+    }
+    <button type="button" class="btn btn-primario" (click)="recargar()">Reintentar</button>
+  </section>
+} @else if (datos(); as d) {
+  <div class="tableros" [class.actualizando]="cargando()" [attr.aria-busy]="cargando()">
+    <!-- 1. Publicaciones por usuario: barras -->
+    <section class="tarjeta">
+      <div class="titulo-tarjeta">
+        <div>
+          <h2>Publicaciones por usuario</h2>
+          <p class="texto-suave">
+            {{ totalPublicaciones() | plural: 'publicación' : 'publicaciones' }} de
+            {{ d.porUsuario.datos.length | plural: 'usuario' }} en el lapso, contando las que
+            después se dieron de baja.
+          </p>
+        </div>
+        @if (d.porUsuario.datos.length) {
+          <button
+            type="button"
+            class="btn btn-secundario btn-chico"
+            [attr.aria-pressed]="tabla.usuarios()"
+            (click)="tabla.usuarios.set(!tabla.usuarios())"
+          >
+            {{ tabla.usuarios() ? 'Ver gráfico' : 'Ver datos' }}
+          </button>
+        }
+      </div>
+
+      @if (!d.porUsuario.datos.length) {
+        <p class="sin-datos texto-suave">Nadie publicó en este lapso.</p>
+      } @else if (tabla.usuarios()) {
+        <div class="tabla-desplazable">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Usuario</th>
+                <th scope="col" class="numero">Publicaciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of d.porUsuario.datos; track fila.usuario.id) {
+                <tr>
+                  <td>
+                    {{ fila.usuario.nombre }} {{ fila.usuario.apellido }}
+                    <span class="texto-suave">{{ '@' + fila.usuario.nombreUsuario }}</span>
+                  </td>
+                  <td class="numero">{{ fila.cantidad }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else if (barras(); as b) {
+        <app-grafico
+          [configuracion]="b.configuracion"
+          [alto]="b.alto"
+          [descripcion]="b.descripcion"
+        />
+        @if (d.porUsuario.datos.length > maxBarras) {
+          <p class="nota texto-suave">
+            Se muestran los {{ maxBarras }} que más publicaron; la lista completa está en "Ver
+            datos".
+          </p>
+        }
+      }
+    </section>
+
+    <!-- 2. Comentarios en el lapso: línea, un punto por día -->
+    <section class="tarjeta">
+      <div class="titulo-tarjeta">
+        <div>
+          <h2>Comentarios en el lapso</h2>
+          <p class="texto-suave">Cuántos comentarios se hicieron cada día.</p>
+        </div>
+        @if (d.porDia.total) {
+          <button
+            type="button"
+            class="btn btn-secundario btn-chico"
+            [attr.aria-pressed]="tabla.dias()"
+            (click)="tabla.dias.set(!tabla.dias())"
+          >
+            {{ tabla.dias() ? 'Ver gráfico' : 'Ver datos' }}
+          </button>
+        }
+      </div>
+
+      @if (resumenDias(); as r) {
+        <dl class="cifras">
+          <div>
+            <dt>Comentarios</dt>
+            <dd>{{ r.total }}</dd>
+          </div>
+          <div>
+            <dt>Promedio por día</dt>
+            <dd>{{ r.promedio }}</dd>
+          </div>
+          @if (r.total) {
+            <div>
+              <dt>El día con más</dt>
+              <dd>
+                {{ r.maximo.cantidad }} <span class="texto-suave">({{ r.maximo.dia }})</span>
+              </dd>
+            </div>
+          }
+        </dl>
+      }
+
+      @if (!d.porDia.total) {
+        <p class="sin-datos texto-suave">No hubo comentarios en este lapso.</p>
+      } @else if (tabla.dias()) {
+        <div class="tabla-desplazable">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Día</th>
+                <th scope="col" class="numero">Comentarios</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of filasDias(); track fila.fecha) {
+                <tr>
+                  <td>{{ fila.dia }}</td>
+                  <td class="numero">{{ fila.cantidad }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else if (linea(); as l) {
+        <app-grafico [configuracion]="l.configuracion" [alto]="260" [descripcion]="l.descripcion" />
+      }
+    </section>
+
+    <!-- 3. Comentarios por publicación: torta -->
+    <section class="tarjeta">
+      <div class="titulo-tarjeta">
+        <div>
+          <h2>Comentarios por publicación</h2>
+          <p class="texto-suave">
+            Qué parte de los comentarios del lapso se llevó cada publicación. No cuenta las
+            publicaciones dadas de baja.
+          </p>
+        </div>
+        @if (d.porPublicacion.datos.length) {
+          <button
+            type="button"
+            class="btn btn-secundario btn-chico"
+            [attr.aria-pressed]="tabla.publicaciones()"
+            (click)="tabla.publicaciones.set(!tabla.publicaciones())"
+          >
+            {{ tabla.publicaciones() ? 'Ver gráfico' : 'Ver datos' }}
+          </button>
+        }
+      </div>
+
+      @if (!d.porPublicacion.datos.length) {
+        <p class="sin-datos texto-suave">Ninguna publicación recibió comentarios en este lapso.</p>
+      } @else if (tabla.publicaciones()) {
+        <div class="tabla-desplazable">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Publicación</th>
+                <th scope="col" class="numero">Comentarios</th>
+                <th scope="col" class="numero">Del total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of filasPublicaciones(); track fila.publicacion.id) {
+                <tr>
+                  <td>
+                    <a [routerLink]="['/publicaciones', fila.publicacion.id]">{{
+                      fila.publicacion.titulo
+                    }}</a>
+                    <span class="texto-suave">de {{ '@' + fila.publicacion.autor }}</span>
+                  </td>
+                  <td class="numero">{{ fila.cantidad }}</td>
+                  <td class="numero">{{ fila.porcentaje }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else if (torta(); as t) {
+        <div class="torta">
+          <div class="dona">
+            <app-grafico
+              [configuracion]="t.configuracion"
+              [alto]="230"
+              [descripcion]="t.descripcion"
+            />
+            <p class="centro" aria-hidden="true">
+              <strong>{{ t.total }}</strong>
+              <span>{{ t.total === 1 ? 'comentario' : 'comentarios' }}</span>
+            </p>
+          </div>
+          <ol class="leyenda">
+            @for (p of t.porciones; track p.id ?? 'resto') {
+              <li>
+                <span class="muestra" [style.background]="p.color" aria-hidden="true"></span>
+                <span class="nombre">
+                  @if (p.id) {
+                    <a [routerLink]="['/publicaciones', p.id]">{{ p.titulo }}</a>
+                    <span class="texto-suave">de {{ '@' + p.autor }}</span>
+                  } @else {
+                    {{ p.titulo }}
+                  }
+                </span>
+                <span class="valor">
+                  <strong>{{ p.cantidad }}</strong>
+                  <span class="texto-suave">{{ p.porcentaje }}</span>
+                </span>
+              </li>
+            }
+          </ol>
+        </div>
+      }
+    </section>
+  </div>
+} @else {
+  <div class="estado sobre-fondo">
+    <span class="spinner" aria-hidden="true"></span>
+    <p class="texto-suave">Cargando estadísticas...</p>
+  </div>
+}

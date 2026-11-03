@@ -65,3 +65,38 @@ label.btn:has(.oculto:focus-visible) {
 .contador {
   text-align: right;
 }
+
+.etiqueta-club {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Perfil de la cuenta nueva: dos radio buttons en una fila. */
+.perfil {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+}
+
+.perfil legend {
+  padding: 0 6px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.opcion {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.opcion input {
+  width: auto;
+  accent-color: var(--color-primario);
+}
