@@ -251,13 +251,15 @@ describe('Autenticación (e2e)', () => {
       ]);
     });
 
-    it('400 sin imagen de perfil', async () => {
+    it('201 sin imagen de perfil (es opcional)', async () => {
       const { status, body } = await registrar(
         { correo: 'c@example.com', nombreUsuario: 'carla' },
         null,
       );
-      expect(status).toBe(400);
-      expect(body.message).toBe('La imagen de perfil es obligatoria.');
+      expect(status).toBe(201);
+      expect(body.token).toEqual(expect.any(String));
+      expect(body.usuario.nombreUsuario).toBe('carla');
+      expect(body.usuario).not.toHaveProperty('imagenPerfil');
     });
 
     it('400 si el archivo no es una imagen', async () => {
@@ -314,7 +316,7 @@ describe('Autenticación (e2e)', () => {
     it('401 con la contraseña incorrecta', async () => {
       const { status, body } = await login('anap', 'Incorrecta1');
       expect(status).toBe(401);
-      expect(body.message).toBe('Usuario o contraseña incorrectos.');
+      expect(body.message).toBe('Las credenciales no son correctas.');
     });
 
     it('401 si la cuenta no existe', async () => {

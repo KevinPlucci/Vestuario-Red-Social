@@ -200,14 +200,15 @@ describe('Usuarios (e2e)', () => {
       ]);
     });
 
-    it('400 sin imagen de perfil', async () => {
+    it('201 sin imagen de perfil (es opcional)', async () => {
       const { status, body } = await crear(
         admin,
         { ...datosCuenta('eva'), perfil: 'usuario' },
         false,
       );
-      expect(status).toBe(400);
-      expect(body.message).toBe('La imagen de perfil es obligatoria.');
+      expect(status).toBe(201);
+      expect(body.nombreUsuario).toBe('eva');
+      expect(body).not.toHaveProperty('imagenPerfil');
     });
 
     it('409 si el correo o el nombre de usuario ya existen', async () => {
@@ -256,7 +257,7 @@ describe('Usuarios (e2e)', () => {
         .post('/autenticacion/login')
         .send({ usuario: 'fede', contrasena: 'Otra1234' });
       expect(status).toBe(401);
-      expect(body.message).toBe('Usuario o contraseña incorrectos.');
+      expect(body.message).toBe('Las credenciales no son correctas.');
     });
 
     it('409 si ya estaba deshabilitada; 400 la propia cuenta; 404 si no existe', async () => {

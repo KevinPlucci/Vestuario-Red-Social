@@ -57,9 +57,9 @@ export class Usuario {
   @Prop({ trim: true })
   club?: string;
 
-  /** URL pública de la imagen de perfil. */
-  @Prop({ required: true })
-  imagenPerfil: string;
+  /** URL pública de la imagen de perfil (opcional: sin foto, el front muestra una silueta). */
+  @Prop()
+  imagenPerfil?: string;
 
   @Prop({ type: String, enum: PERFILES, default: 'usuario' })
   perfil: Perfil;

@@ -209,7 +209,7 @@ ejemplo, "Mi perfil · Vestuario").
 
 | Método | Ruta | Cuerpo | Respuestas |
 |---|---|---|---|
-| `POST` | `/autenticacion/registro` | `multipart/form-data`: `nombre`, `apellido`, `correo`, `nombreUsuario`, `contrasena`, `fechaNacimiento` (AAAA-MM-DD), `posicion` (`arquero`, `defensor`, `mediocampista` o `delantero`), `club` (opcional: el identificador de uno de los 30 clubes, como `boca-juniors` o `river-plate`), `descripcion` y el archivo `imagenPerfil` | **201** `{ token, usuario }` · **400** datos inválidos, club fuera de la lista o imagen faltante · **409** correo o nombre de usuario en uso |
+| `POST` | `/autenticacion/registro` | `multipart/form-data`: `nombre`, `apellido`, `correo`, `nombreUsuario`, `contrasena`, `fechaNacimiento` (AAAA-MM-DD), `posicion` (`arquero`, `defensor`, `mediocampista` o `delantero`), `club` (opcional: el identificador de uno de los 30 clubes, como `boca-juniors` o `river-plate`), `descripcion` y el archivo opcional `imagenPerfil` | **201** `{ token, usuario }` · **400** datos inválidos, club fuera de la lista o imagen inválida · **409** correo o nombre de usuario en uso |
 | `POST` | `/autenticacion/login` | JSON `{ "usuario": "<correo o nombre de usuario>", "contrasena": "..." }` | **200** `{ token, usuario }` · **400** faltan datos · **401** credenciales incorrectas · **403** cuenta deshabilitada (con `motivo: "cuenta-deshabilitada"`) |
 | `POST` | `/autenticacion/autorizar` | — (token en el header) | **200** datos del usuario · **401** token faltante, inválido o vencido, o cuenta deshabilitada |
 | `POST` | `/autenticacion/refrescar` | — (token en el header) | **200** `{ token }` con el mismo payload y 15 minutos más · **401** token faltante, inválido o vencido, o cuenta deshabilitada |
@@ -283,7 +283,7 @@ erDiagram
     string posicion "arquero, defensor, mediocampista o delantero"
     string club "opcional: identificador de uno de los 30 clubes"
     string descripcion
-    string imagenPerfil "URL de /imagenes/:id"
+    string imagenPerfil "URL de /imagenes/:id, opcional"
     string perfil "usuario o administrador"
     boolean activo "baja lógica de la cuenta"
     date createdAt
@@ -472,7 +472,7 @@ Imágenes:
   por publicación sin las dadas de baja, lapso por defecto de 30 días y los 400 de fechas. Autenticación (31): registro
   con posición y club (y sin club, y con un club fuera de la lista), cuenta activa al crearse, token con identidad, rol y 15 minutos,
   contraseña encriptada, imagen servida, duplicados, cada regla de la contraseña, posición inválida, mensajes por
-  campo, imagen faltante, inválida o pesada, login por usuario y por correo, `autorizar` (válido, sin token,
+  campo, sin imagen (es opcional), imagen inválida o pesada, login por usuario y por correo, `autorizar` (válido, sin token,
   adulterado, firmado con otra clave, vencido, cuenta inexistente) y `refrescar` (mismo payload y 15 minutos más,
   vencido, sin token). Publicaciones (36): sesión obligatoria en todas las rutas, validaciones, alta con y sin imagen,
   orden por fecha y por "Me gusta", paginación, filtro por usuario, cantidad de comentarios, parámetros inválidos,
@@ -568,8 +568,8 @@ Imágenes:
   las fechas de más de una semana), `nombrePosicion` (identificador de la posición a su nombre) y `plural` (cantidad
   con la palabra en singular o plural).
 - **Directivas propias** (`shared/directives`): `*appSoloAdmin` es estructural (con `TemplateRef` y
-  `ViewContainerRef`, y un `effect` que crea o saca la vista si cambia la sesión); `appImagenRespaldo` escucha el
-  `error` de un `<img>` y pone la silueta por defecto; `appAutoAltura` ajusta la altura del `<textarea>` al contenido
+  `ViewContainerRef`, y un `effect` que crea o saca la vista si cambia la sesión); `appImagenRespaldo` recibe el
+  `[src]` del `<img>` y pone la silueta por defecto si no hay imagen o si dispara `error`; `appAutoAltura` ajusta la altura del `<textarea>` al contenido
   al escribir y cuando el formulario cambia el valor (por ejemplo, al vaciarlo después de publicar).
 - **Dashboard de usuarios**: la búsqueda (`toObservable` del signal con `debounceTime` de 300 ms), la página y un
   `BehaviorSubject` para recargar se combinan con `combineLatest` y `switchMap`, que descarta las respuestas viejas.
@@ -596,6 +596,7 @@ Imágenes:
 
 | Fecha | Versión | Cambios |
 |---|---|---|
+| 04/11/2026 | 0.4.1 | La imagen de perfil pasa a ser opcional en el registro y en el alta del dashboard: la cuenta se crea sin `imagenPerfil` y la directiva `appImagenRespaldo` muestra la silueta también cuando no hay foto. El error del login dice "Las credenciales no son correctas.". |
 | 03/11/2026 | 0.4.0 | Sprint 4. Backend: `UsuariosController` solo para administradores (`AdminGuard`): listado paginado con búsqueda, alta con perfil elegible y baja y alta lógica (`activo`); el login responde 403 a una cuenta deshabilitada y `SesionGuard` corta su sesión con 401, los dos con `motivo`; `EstadisticasController` en el módulo de publicaciones con publicaciones por usuario, comentarios por día y comentarios por publicación en un lapso; el club se valida contra los 30 de la Liga Profesional; el autor de cada publicación viaja con su club; `JwtModule` global; `PaginacionDto` pasa a `comun/`; comando `npm run sembrar` con una cuenta administradora y 10 jugadores de ejemplo; 21 pruebas e2e nuevas (87 en total). Frontend: dashboards de usuarios y de estadísticas (Chart.js: barras, líneas y torta, con lapso elegible y tabla de datos) con `adminGuard` y accesos en el encabezado; botón para eliminar cualquier publicación como administrador; aviso de cuenta deshabilitada en el login y al cortarse la sesión; formulario de cuenta compartido por el registro y el dashboard; club elegido de una lista con su escudo, fondo con la cancha del club del jugador (o una cancha dibujada) y página de créditos de las imágenes; PWA (manifest, íconos y service worker); pipes `tiempoRelativo`, `nombrePosicion` y `plural`, y directivas `*appSoloAdmin`, `appImagenRespaldo` y `appAutoAltura`. El aviso para extender la sesión se calcula según la duración del token (a falta de un tercio). |
 | 31/10/2026 | 0.3.1 | El repositorio pasa a llamarse `Vestuario-Red-Social`. La URL de Vercel sigue siendo `plaza-red-social.vercel.app`. |
 | 31/10/2026 | 0.3.0 | Temática de jugadores de fútbol: la aplicación pasa a llamarse Vestuario, el registro suma la posición (obligatoria) y el club (opcional), la posición se ve junto al autor, y hay nuevos colores, encabezado con franjas de césped y favicon con una pelota. Sprint 3. Backend: JWT de 15 minutos con `@nestjs/jwt` (registro y login devuelven `{ token, usuario }`), `SesionGuard` con el token en lugar de `X-Usuario-Id`, `POST /autenticacion/autorizar` y `POST /autenticacion/refrescar`, todas las rutas de publicaciones con sesión, `GET /publicaciones/:id`, `cantidadComentarios` en cada publicación, alta y edición de comentarios, variable `JWT_SECRETO` y 24 pruebas e2e nuevas (66 en total). Frontend: token en `localStorage`, guards de sesión e invitado, pantalla de carga que valida el token, interceptor que agrega el token y vuelve al login con un 401, aviso a los 10 minutos para extender la sesión, página de cada publicación con comentarios (escribir, cargar más de a 5 y editar los propios) y componente de comentario reutilizado en Mi perfil. Se corrige el modal, que podía cerrar el modal siguiente si se abría enseguida. |

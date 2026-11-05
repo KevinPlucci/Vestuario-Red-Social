@@ -53,7 +53,7 @@ aplicación es la cancha del club de cada jugador y su escudo aparece, chiquito,
 | Mi perfil | Foto, nombre y apellido, nombre de usuario, posición, el escudo del club, perfil, descripción, correo, club, fecha de nacimiento y fecha de alta, y las últimas 3 publicaciones propias, cada una con sus comentarios más recientes | Con sesión |
 | Usuarios (dashboard) | Formulario para crear cuentas (los datos del registro y el perfil, con botones de opción) y el listado de cuentas de a 10, con buscador, perfil, estado y el botón para deshabilitar o habilitar cada una | Administradores |
 | Estadísticas (dashboard) | El lapso (últimos 7, 30 o 90 días, o dos fechas a elección) y tres gráficos: publicaciones por usuario (barras), comentarios por día (líneas) y comentarios por publicación (torta). Cada gráfico se puede ver también como tabla | Administradores |
-| Crear cuenta | Formulario de registro con imagen de perfil y vista previa, y la lista de los 30 clubes: al elegir uno, de fondo aparece su cancha | Sin sesión |
+| Crear cuenta | Formulario de registro con imagen de perfil opcional y vista previa, y la lista de los 30 clubes: al elegir uno, de fondo aparece su cancha | Sin sesión |
 | Ingresar | Formulario con correo o nombre de usuario y contraseña | Sin sesión |
 | Créditos de las imágenes | Autor y licencia de cada foto de estadio y de cada escudo | Todos |
 | Página no encontrada | Aviso para direcciones que no existen, con un enlace a publicaciones | Todos |
@@ -81,7 +81,7 @@ el autor de la foto, con el enlace a los créditos.
 **Ingreso**
 
 1. Se escribe el correo o el nombre de usuario (da igual mayúsculas o minúsculas) y la contraseña.
-2. Si las credenciales no coinciden, un modal avisa "Usuario o contraseña incorrectos." sin decir cuál de los dos
+2. Si las credenciales no coinciden, un modal avisa "Las credenciales no son correctas." sin decir cuál de los dos
    falló.
 3. Si coinciden pero la cuenta está deshabilitada, el modal "Tu cuenta está deshabilitada" avisa que no está autorizado
    a ingresar y que se comunique con un administrador.
@@ -180,7 +180,7 @@ el autor de la foto, con el enlace a los créditos.
 | Posición | Obligatoria: arquero, defensor, mediocampista o delantero |
 | Club | Opcional. Uno de los 30 clubes de la Liga Profesional 2026, elegido de la lista. Si se deja vacío, el perfil muestra "Sin club" |
 | Descripción breve | Obligatoria, hasta 200 caracteres, con un contador a la vista |
-| Imagen de perfil | Obligatoria. JPG, PNG, GIF o WEBP de hasta 2 MB |
+| Imagen de perfil | Opcional. JPG, PNG, GIF o WEBP de hasta 2 MB. Sin foto, se muestra una silueta |
 | Perfil | Toda cuenta que se registra es "usuario" y no lo puede elegir. Un administrador, al crear una cuenta desde el dashboard, elige "usuario" o "administrador" |
 | Estado de la cuenta | Activa al crearse. Un administrador la deshabilita (baja lógica) y la vuelve a habilitar. Deshabilitada, no puede ingresar ni usar una sesión abierta. Un administrador no puede deshabilitar su propia cuenta |
 | Sesión | Dura 15 minutos desde que se emite el token. Extenderla da 15 minutos más desde ese momento |
@@ -353,7 +353,7 @@ Puntos que la consigna no define y cómo se resolvieron:
 | Datos de ejemplo | El backend trae un comando (`npm run sembrar`) que carga una cuenta administradora y 10 jugadores de la Liga Profesional con su nombre, fecha de nacimiento, posición y club reales (a noviembre de 2026), con publicaciones, comentarios y "Me gusta" repartidos en los últimos 30 días para que las estadísticas tengan datos. Son cuentas de demostración: las publicaciones y los comentarios son inventados y las fotos de perfil son siluetas con los colores de cada club, no fotos de los jugadores. |
 | Correo o nombre de usuario para ingresar | Se aceptan los dos en el mismo campo. Los dos son únicos, así que cualquiera identifica a la cuenta. Como el nombre de usuario no admite `@`, un texto con `@` siempre es un correo. |
 | Mayúsculas | Correo y nombre de usuario se guardan en minúsculas: `Ana`, `ana` y `ANA` son la misma cuenta. La contraseña sí distingue mayúsculas. |
-| Campos obligatorios | Todos los del registro, incluidas la imagen de perfil y la descripción breve: la consigna los lista sin marcar ninguno como opcional (a diferencia de la imagen de las publicaciones, que dice "opcional"). El club es el único opcional, porque no está en la consigna. |
+| Campos obligatorios | Todos los del registro, incluida la descripción breve, salvo dos: el club, porque no está en la consigna, y la imagen de perfil, que desde la versión 0.4.1 es opcional (igual que la de las publicaciones): sin foto, la aplicación muestra una silueta. |
 | Imagen de perfil | JPG, PNG, GIF o WEBP de hasta 2 MB. El formato se comprueba por el contenido del archivo, no por su extensión. |
 | Fecha de nacimiento | Sin edad mínima: la consigna no la pide. Solo se rechazan fechas futuras o anteriores a 1900. |
 | Repetir contraseña | Se compara en la pantalla. Al servidor viaja una sola vez. |
@@ -381,7 +381,7 @@ Puntos que la consigna no define y cómo se resolvieron:
 | Estadísticas: tipos de gráfico | Barras para comparar cuánto publicó cada uno, líneas para ver cómo cambian los comentarios con los días y torta para ver qué parte del total se llevó cada publicación, como pide la consigna (tipos distintos). La torta muestra las 4 más comentadas y junta el resto en "Otras", porque con muchas porciones no se lee; la tabla tiene todas. |
 | Estadísticas: colores | El verde de Vestuario y tres colores más, elegidos para que se distingan también con daltonismo. Cada publicación conserva su color en la torta al cambiar el lapso, si sigue entre las primeras. Los datos nunca dependen solo del color: la lista de la torta y la tabla *Ver datos* dicen todos los valores. |
 | Pipes propios | `tiempoRelativo` ("recién", "hace 5 min", "hace 3 h", "ayer", "hace 4 días" y, de una semana en adelante, la fecha: "12 oct 2026"; al pasar el puntero se ve la fecha y hora exactas), `nombrePosicion` (`mediocampista` → "Mediocampista") y `plural` (`3 \| plural: 'comentario'` → "3 comentarios"). |
-| Directivas propias | `*appSoloAdmin` (muestra lo que envuelve solo a los administradores: los accesos a los dashboards), `appImagenRespaldo` (si una foto de perfil no carga, pone una silueta) y `appAutoAltura` (los cuadros de texto crecen a medida que se escribe). |
+| Directivas propias | `*appSoloAdmin` (muestra lo que envuelve solo a los administradores: los accesos a los dashboards), `appImagenRespaldo` (si una cuenta no tiene foto de perfil o la foto no carga, pone una silueta) y `appAutoAltura` (los cuadros de texto crecen a medida que se escribe). |
 | PWA | Se instala desde el navegador y guarda la aplicación y las imágenes ya vistas para abrir más rápido. Los datos (publicaciones, comentarios) siempre se piden al servidor, porque tienen que estar al día y llevan la sesión. Solo funciona en el build de producción. |
 | Comentarios por carga | 5 por vez en la página de la publicación. Si alguien comenta mientras tanto, *Cargar más* no repite los que ya se ven. |
 | Editar comentarios | Solo el autor, ni siquiera un administrador (la consigna habla de "los comentarios propios"). Siempre queda marcado como editado, aunque el texto no cambie. Los comentarios no se eliminan: la consigna no lo pide. |

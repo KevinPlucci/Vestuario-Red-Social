@@ -62,7 +62,7 @@ export class FormularioCuenta {
       club: [''],
       descripcion: ['', [Validators.required, Validators.maxLength(200)]],
       perfil: this.fb.control<Perfil>('usuario', Validators.required),
-      imagenPerfil: this.fb.control<File | null>(null, [Validators.required, imagenValida]),
+      imagenPerfil: this.fb.control<File | null>(null, [imagenValida]),
     },
     { validators: contrasenasIguales },
   );
@@ -106,12 +106,13 @@ export class FormularioCuenta {
       this.form.markAllAsTouched();
       return;
     }
-    // Va como multipart/form-data porque incluye la imagen. "Repetir contraseña" solo se valida acá.
+    // Va como multipart/form-data porque puede incluir la imagen. "Repetir contraseña" solo se valida acá.
     const { repetirContrasena: _, imagenPerfil, perfil, ...datos } = this.form.getRawValue();
     const formulario = new FormData();
     for (const [campo, valor] of Object.entries(datos)) formulario.append(campo, valor);
     if (this.elegirPerfil()) formulario.append('perfil', perfil);
-    formulario.append('imagenPerfil', imagenPerfil!);
+    // La imagen es opcional: sin foto, la cuenta muestra la silueta por defecto.
+    if (imagenPerfil) formulario.append('imagenPerfil', imagenPerfil);
     this.enviar.emit(formulario);
   }
 

@@ -7,7 +7,7 @@ export interface Autor {
   nombre: string;
   apellido: string;
   nombreUsuario: string;
-  imagenPerfil: string;
+  imagenPerfil?: string;
   posicion: Posicion;
   /** Identificador del club (no viene si no tiene). */
   club?: string;

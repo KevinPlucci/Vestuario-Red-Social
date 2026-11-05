@@ -29,8 +29,7 @@ export class AutenticacionController {
   )
   registrar(
     @Body() datos: RegistroDto,
-    @UploadedFile(new ImagenPipe('La imagen de perfil es obligatoria.'))
-    imagen: Express.Multer.File,
+    @UploadedFile(new ImagenPipe()) imagen: Express.Multer.File | undefined,
   ) {
     return this.autenticacion.registrar(datos, imagen);
   }

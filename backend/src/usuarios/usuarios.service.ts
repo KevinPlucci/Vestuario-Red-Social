@@ -61,11 +61,11 @@ export class UsuariosService {
   /**
    * Alta de una cuenta, desde el registro (siempre "usuario") o desde el dashboard de un
    * administrador (con el perfil elegido): valida que no se repitan el correo ni el nombre de
-   * usuario, encripta la contraseña y guarda la imagen de perfil.
+   * usuario, encripta la contraseña y guarda la imagen de perfil, si se mandó (es opcional).
    */
   async crearCuenta(
     datos: RegistroDto,
-    imagen: Express.Multer.File,
+    imagen: Express.Multer.File | undefined,
     perfil: Perfil = 'usuario',
   ): Promise<UsuarioDocument> {
     if (await this.existeCorreo(datos.correo)) throw duplicado('correo');
@@ -73,7 +73,9 @@ export class UsuariosService {
       throw duplicado('nombreUsuario');
 
     const contrasena = await bcrypt.hash(datos.contrasena, RONDAS_BCRYPT);
-    const imagenPerfil = await this.imagenes.guardar(imagen);
+    const imagenPerfil = imagen
+      ? await this.imagenes.guardar(imagen)
+      : undefined;
     try {
       return await this.usuarioModel.create({
         ...datos,
@@ -82,7 +84,7 @@ export class UsuariosService {
         perfil,
       });
     } catch (error) {
-      await this.imagenes.eliminarPorUrl(imagenPerfil);
+      if (imagenPerfil) await this.imagenes.eliminarPorUrl(imagenPerfil);
       const campo = campoDuplicado(error);
       throw campo ? duplicado(campo) : error;
     }

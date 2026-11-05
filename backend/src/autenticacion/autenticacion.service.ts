@@ -19,7 +19,7 @@ export class AutenticacionService {
     private readonly jwt: JwtService,
   ) {}
 
-  async registrar(datos: RegistroDto, imagen: Express.Multer.File) {
+  async registrar(datos: RegistroDto, imagen?: Express.Multer.File) {
     // El perfil no se toma del formulario: toda cuenta nueva arranca como "usuario".
     const usuario = await this.usuarios.crearCuenta(datos, imagen);
     return this.iniciarSesionDe(usuario);
@@ -32,7 +32,7 @@ export class AutenticacionService {
       encontrado !== null &&
       (await bcrypt.compare(contrasena, encontrado.contrasena));
     if (!coincide)
-      throw new UnauthorizedException('Usuario o contraseña incorrectos.');
+      throw new UnauthorizedException('Las credenciales no son correctas.');
     // Recién con la contraseña correcta se avisa la baja: así no se revela qué cuentas existen.
     if (encontrado.activo === false) {
       throw new ForbiddenException({

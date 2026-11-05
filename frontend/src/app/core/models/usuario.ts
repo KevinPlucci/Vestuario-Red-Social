@@ -19,7 +19,7 @@ export interface Usuario {
   nombreUsuario: string;
   fechaNacimiento: string;
   descripcion: string;
-  imagenPerfil: string;
+  imagenPerfil?: string;
   posicion: Posicion;
   /** Identificador de uno de los 30 clubes de CLUBES (no viene si no tiene). */
   club?: string;

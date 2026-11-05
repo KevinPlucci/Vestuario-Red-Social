@@ -21,7 +21,7 @@ Hecha con **Angular 21** en el frontend y **NestJS 11** con **MongoDB** en el ba
 ## Qué hace
 
 - Registro con nombre, apellido, correo, nombre de usuario, contraseña, fecha de nacimiento, posición en la cancha,
-  club (opcional, uno de los 30 de la Liga Profesional), descripción breve e imagen de perfil, con validaciones y
+  club (opcional, uno de los 30 de la Liga Profesional), descripción breve e imagen de perfil (opcional), con validaciones y
   mensajes en cada campo.
 - De fondo, la cancha del club de cada jugador, y su escudo chiquito junto a su nombre.
 - Ingreso con el correo o con el nombre de usuario. La sesión es un token JWT que dura 15 minutos: a los 10 aparece

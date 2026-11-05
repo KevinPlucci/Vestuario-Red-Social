@@ -41,8 +41,7 @@ export class UsuariosController {
   )
   crear(
     @Body() { perfil, ...datos }: CrearUsuarioDto,
-    @UploadedFile(new ImagenPipe('La imagen de perfil es obligatoria.'))
-    imagen: Express.Multer.File,
+    @UploadedFile(new ImagenPipe()) imagen: Express.Multer.File | undefined,
   ) {
     return this.usuarios.crearCuenta(datos, imagen, perfil);
   }
