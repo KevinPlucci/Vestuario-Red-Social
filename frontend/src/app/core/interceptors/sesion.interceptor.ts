@@ -17,6 +17,11 @@ export const sesionInterceptor: HttpInterceptorFn = (pedido, siguiente) => {
   return siguiente(pedido.clone({ setHeaders: { Authorization: `Bearer ${token}` } })).pipe(
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse && error.status === 401) {
+        // Queda en la consola del navegador (además de la pestaña Red) el 401 que devolvió la API.
+        console.error(
+          `401 Unauthorized en ${pedido.method} ${pedido.url}: el token venció o no es válido. Se cierra la sesión.`,
+          error.error,
+        );
         // La API indica el motivo cuando un administrador deshabilitó la cuenta.
         void auth.expulsar((error.error as { motivo?: string } | null)?.motivo);
         return EMPTY;
