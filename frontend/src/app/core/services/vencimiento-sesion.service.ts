@@ -9,8 +9,9 @@ const avisoAntesDe = (duracion: number) => duracion / 3;
 
 /**
  * Vigila el vencimiento del token: avisa cuando queda un tercio de la sesión y ofrece extenderla
- * (refrescar el token). Si no se extiende, al vencer se consulta a la API con el token ya vencido:
- * responde 401 y sesionInterceptor cierra la sesión y vuelve al login.
+ * (refrescar el token). Si no se extiende, al vencer avisa con un modal que se puede cancelar: el
+ * usuario se queda en la página, pero lo próximo que haga (un pedido a la API, que responde 401 y
+ * atrapa sesionInterceptor, o ir a otra pantalla, que revisa sesionGuard) lo lleva al login.
  */
 @Injectable({ providedIn: 'root' })
 export class VencimientoSesion {
@@ -28,18 +29,25 @@ export class VencimientoSesion {
         () => void this.avisar(vence, duracion),
         faltan - avisoAntesDe(duracion),
       );
-      let fin = setTimeout(() => comprobar(), faltan);
-      // Si el reloj de este equipo va adelantado y la API todavía acepta el token, se reintenta.
-      const comprobar = () =>
-        this.auth.autorizar().subscribe({
-          next: () => (fin = setTimeout(() => comprobar(), 1000)),
-          error: () => undefined,
-        });
+      const fin = setTimeout(() => void this.vencio(vence), faltan);
       onCleanup(() => {
         clearTimeout(aviso);
         clearTimeout(fin);
       });
     });
+  }
+
+  /** El token venció: se avisa, y se puede volver a ingresar ya o seguir mirando la página. */
+  private async vencio(vence: number): Promise<void> {
+    const volver = await this.modal.confirmar({
+      titulo: 'Tu sesión venció',
+      mensaje:
+        'Podés seguir mirando esta página, pero para hacer cualquier otra cosa vas a tener que volver a iniciar sesión.',
+      textoAceptar: 'Iniciar sesión',
+      textoCancelar: 'Cancelar',
+    });
+    // Si mientras tanto cambió el token (por ejemplo, ingresó de nuevo), no hay nada que hacer.
+    if (volver && this.auth.vencimiento() === vence) void this.auth.expulsar(undefined, false);
   }
 
   private async avisar(vence: number, duracion: number): Promise<void> {

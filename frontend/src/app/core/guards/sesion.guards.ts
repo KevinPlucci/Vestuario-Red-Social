@@ -5,11 +5,16 @@ import { AuthService } from '../services/auth.service';
 /**
  * Pantallas de la aplicación: solo con sesión. La primera vez en cada visita se pasa por la
  * pantalla de carga, que valida el token con la API y después vuelve a la dirección pedida.
+ * Si el token ya venció, ir a otra pantalla cierra la sesión y lleva al login con el aviso.
  */
 export const sesionGuard: CanActivateFn = (_ruta, estado) => {
   const auth = inject(AuthService);
   const router = inject(Router);
   if (!auth.haySesion()) return router.createUrlTree(['/login']);
+  if (auth.tokenVencido()) {
+    void auth.expulsar();
+    return false;
+  }
   if (!auth.sesionConfirmada()) {
     return router.createUrlTree(['/cargando'], { queryParams: { destino: estado.url } });
   }

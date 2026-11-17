@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Sesion, Usuario } from '../models/usuario';
-import { textoDuracion } from '../utils/duracion';
 import { ModalService } from './modal.service';
 
 const CLAVE_SESION = 'vestuario.sesion';
@@ -55,6 +54,12 @@ export class AuthService {
   });
   /** Momento (en ms) en que vence el token. */
   readonly vencimiento = computed(() => this.tiempos()?.vence ?? null);
+  /** true si el token ya venció (la sesión sigue guardada hasta que el usuario haga algo). */
+  tokenVencido(): boolean {
+    const vence = this.vencimiento();
+    return vence !== null && Date.now() >= vence;
+  }
+
   /** Cuánto dura cada token (en ms). Lo decide el servidor: se lee del token, no está escrito acá. */
   readonly duracion = computed(() => {
     const tiempos = this.tiempos();
@@ -103,13 +108,14 @@ export class AuthService {
 
   /**
    * El token venció o la API lo rechazó: se cierra la sesión, se vuelve al login y se avisa por qué
-   * (sesión vencida o cuenta deshabilitada por un administrador).
+   * (sesión vencida o cuenta deshabilitada por un administrador). Con avisar en false no se muestra
+   * el modal (el usuario ya eligió volver a ingresar).
    */
-  async expulsar(motivo?: string): Promise<void> {
+  async expulsar(motivo?: string, avisar = true): Promise<void> {
     if (!this.haySesion()) return;
-    const duracion = this.duracion();
     this.cerrarSesion();
     await this.router.navigateByUrl('/login');
+    if (!avisar) return;
     if (motivo === CUENTA_DESHABILITADA) {
       void this.modal.abrir({
         tipo: 'error',
@@ -121,7 +127,7 @@ export class AuthService {
     }
     void this.modal.abrir({
       titulo: 'Tu sesión venció',
-      mensaje: `Por seguridad, la sesión dura ${duracion ? textoDuracion(duracion) : 'un tiempo limitado'}. Ingresá de nuevo para seguir.`,
+      mensaje: 'Volvé a iniciar sesión para poder seguir en la página.',
     });
   }
 
