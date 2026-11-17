@@ -4,12 +4,13 @@ import { mensajesDeError } from '../utils/errores';
 import { AuthService } from './auth.service';
 import { ModalService } from './modal.service';
 
-/** El aviso aparece cuando queda un tercio de la sesión: con tokens de 15 minutos, a los 10 (quedan 5). */
+/** El aviso aparece cuando queda un tercio de la sesión: con un token de 10 segundos, cuando quedan unos 3. */
 const avisoAntesDe = (duracion: number) => duracion / 3;
 
 /**
  * Vigila el vencimiento del token: avisa cuando queda un tercio de la sesión y ofrece extenderla
- * (refrescar el token). Si no se extiende, al vencer cierra la sesión y vuelve al login.
+ * (refrescar el token). Si no se extiende, al vencer se consulta a la API con el token ya vencido:
+ * responde 401 y sesionInterceptor cierra la sesión y vuelve al login.
  */
 @Injectable({ providedIn: 'root' })
 export class VencimientoSesion {
@@ -27,7 +28,13 @@ export class VencimientoSesion {
         () => void this.avisar(vence, duracion),
         faltan - avisoAntesDe(duracion),
       );
-      const fin = setTimeout(() => void this.auth.expulsar(), faltan);
+      let fin = setTimeout(() => comprobar(), faltan);
+      // Si el reloj de este equipo va adelantado y la API todavía acepta el token, se reintenta.
+      const comprobar = () =>
+        this.auth.autorizar().subscribe({
+          next: () => (fin = setTimeout(() => comprobar(), 1000)),
+          error: () => undefined,
+        });
       onCleanup(() => {
         clearTimeout(aviso);
         clearTimeout(fin);
@@ -38,7 +45,7 @@ export class VencimientoSesion {
   private async avisar(vence: number, duracion: number): Promise<void> {
     const extender = await this.modal.confirmar({
       titulo: 'Tu sesión está por vencer',
-      mensaje: `Quedan ${textoDuracion(vence - Date.now())} de sesión. ¿Querés extenderla ${textoDuracion(duracion)} más?`,
+      mensaje: `Quedan ${textoDuracion(vence - Date.now())} de sesión. ¿Querés extenderla?`,
       textoAceptar: 'Extender sesión',
       textoCancelar: 'Ahora no',
     });
@@ -50,7 +57,7 @@ export class VencimientoSesion {
         void this.modal.abrir({
           tipo: 'exito',
           titulo: 'Sesión extendida',
-          mensaje: `Tenés ${textoDuracion(duracion)} más.`,
+          mensaje: `Tenés ${textoDuracion(this.auth.duracion() ?? duracion)} más.`,
         }),
       error: (error: unknown) =>
         void this.modal.abrir({

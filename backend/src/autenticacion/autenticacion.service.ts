@@ -10,7 +10,7 @@ import { UsuariosService } from '../usuarios/usuarios.service';
 import { LoginDto } from './dto/login.dto';
 import { RegistroDto } from './dto/registro.dto';
 import { CUENTA_DESHABILITADA } from './cuenta-deshabilitada';
-import { DatosToken } from './token';
+import { DatosToken, DURACION_EXTENSION_SEGUNDOS } from './token';
 
 @Injectable()
 export class AutenticacionService {
@@ -46,9 +46,14 @@ export class AutenticacionService {
     return this.iniciarSesionDe(encontrado);
   }
 
-  /** Token nuevo con el mismo payload que el actual y 15 minutos más de vida. */
+  /** Token nuevo con el mismo payload que el actual, que dura lo que dura una extensión. */
   refrescar({ sub, nombreUsuario, perfil }: DatosToken) {
-    return { token: this.firmar({ sub, nombreUsuario, perfil }) };
+    return {
+      token: this.firmar(
+        { sub, nombreUsuario, perfil },
+        DURACION_EXTENSION_SEGUNDOS,
+      ),
+    };
   }
 
   /** Respuesta del registro y del login: el token y todos los datos del usuario. */
@@ -61,7 +66,10 @@ export class AutenticacionService {
     return { token, usuario };
   }
 
-  private firmar(datos: DatosToken): string {
-    return this.jwt.sign(datos);
+  /** Sin duración usa la del módulo (la del login); con duración, la indicada. */
+  private firmar(datos: DatosToken, duracionSegundos?: number): string {
+    return duracionSegundos
+      ? this.jwt.sign(datos, { expiresIn: duracionSegundos })
+      : this.jwt.sign(datos);
   }
 }

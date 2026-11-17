@@ -7,6 +7,10 @@ import { Connection } from 'mongoose';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
+import {
+  DURACION_EXTENSION_SEGUNDOS,
+  DURACION_TOKEN_SEGUNDOS,
+} from '../src/autenticacion/token';
 
 /** Cabecera de un PNG: alcanza para que se reconozca como imagen. */
 const PNG = Buffer.from('89504e470d0a1a0a0000000d49484452', 'hex');
@@ -121,7 +125,7 @@ describe('Autenticación (e2e)', () => {
       expect(body.usuario).not.toHaveProperty('_id');
     });
 
-    it('el token lleva la identidad y el rol, y vence a los 15 minutos', async () => {
+    it('el token lleva la identidad y el rol, y vence a los 10 segundos', async () => {
       const { body } = await login('anap', 'Segura123');
       const datos = payload(body.token as string);
       expect(datos).toMatchObject({
@@ -129,7 +133,7 @@ describe('Autenticación (e2e)', () => {
         nombreUsuario: 'anap',
         perfil: 'usuario',
       });
-      expect(datos.exp - datos.iat).toBe(15 * 60);
+      expect(datos.exp - datos.iat).toBe(DURACION_TOKEN_SEGUNDOS);
     });
 
     it('guarda la contraseña encriptada', async () => {
@@ -398,9 +402,9 @@ describe('Autenticación (e2e)', () => {
   });
 
   describe('POST /autenticacion/refrescar', () => {
-    it('200 con un token nuevo: mismo payload y 15 minutos más', async () => {
-      // Un token emitido hace 10 minutos: le quedan 5.
-      const viejo = await tokenEmitido(ahora() - 10 * 60);
+    it('200 con un token nuevo: mismo payload y 20 segundos de vida', async () => {
+      // Un token emitido hace 5 segundos: le quedan 5.
+      const viejo = await tokenEmitido(ahora() - 5);
       const { status, body } = await conToken('refrescar', viejo);
       expect(status).toBe(200);
 
@@ -411,8 +415,8 @@ describe('Autenticación (e2e)', () => {
         nombreUsuario: antes.nombreUsuario,
         perfil: antes.perfil,
       });
-      expect(despues.exp - despues.iat).toBe(15 * 60);
-      expect(despues.exp).toBeGreaterThanOrEqual(antes.exp + 10 * 60);
+      expect(despues.exp - despues.iat).toBe(DURACION_EXTENSION_SEGUNDOS);
+      expect(despues.exp).toBeGreaterThanOrEqual(antes.exp + 10);
       expect((await conToken('autorizar', body.token as string)).status).toBe(
         200,
       );

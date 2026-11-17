@@ -49,7 +49,7 @@ export class AutenticacionController {
     return usuario;
   }
 
-  /** 200 con { token } (mismo payload, 15 minutos más) · 401 token faltante, inválido o vencido. */
+  /** 200 con { token } (mismo payload, dura lo que una extensión) · 401 token faltante, inválido o vencido. */
   @Post('refrescar')
   @HttpCode(HttpStatus.OK)
   @UseGuards(SesionGuard)
