@@ -125,7 +125,7 @@ describe('Autenticación (e2e)', () => {
       expect(body.usuario).not.toHaveProperty('_id');
     });
 
-    it('el token lleva la identidad y el rol, y vence a los 10 segundos', async () => {
+    it('el token lleva la identidad y el rol, y vence a los 30 segundos', async () => {
       const { body } = await login('anap', 'Segura123');
       const datos = payload(body.token as string);
       expect(datos).toMatchObject({
@@ -402,9 +402,9 @@ describe('Autenticación (e2e)', () => {
   });
 
   describe('POST /autenticacion/refrescar', () => {
-    it('200 con un token nuevo: mismo payload y 20 segundos de vida', async () => {
-      // Un token emitido hace 5 segundos: le quedan 5.
-      const viejo = await tokenEmitido(ahora() - 5);
+    it('200 con un token nuevo: mismo payload y 15 segundos de vida', async () => {
+      // Un token emitido hace 20 segundos: le quedan 10.
+      const viejo = await tokenEmitido(ahora() - 20);
       const { status, body } = await conToken('refrescar', viejo);
       expect(status).toBe(200);
 
@@ -416,7 +416,7 @@ describe('Autenticación (e2e)', () => {
         perfil: antes.perfil,
       });
       expect(despues.exp - despues.iat).toBe(DURACION_EXTENSION_SEGUNDOS);
-      expect(despues.exp).toBeGreaterThanOrEqual(antes.exp + 10);
+      expect(despues.exp).toBeGreaterThanOrEqual(antes.exp + 5);
       expect((await conToken('autorizar', body.token as string)).status).toBe(
         200,
       );
