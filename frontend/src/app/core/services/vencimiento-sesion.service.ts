@@ -4,11 +4,11 @@ import { mensajesDeError } from '../utils/errores';
 import { AuthService } from './auth.service';
 import { ModalService } from './modal.service';
 
-/** El aviso aparece a la mitad de la sesión: con el token de 30 segundos, cuando quedan 15. */
-const avisoAntesDe = (duracion: number) => duracion / 2;
+/** El modal de aviso aparece 30 segundos antes de que venza el token (o a la mitad, si el token durara menos de un minuto). */
+const avisoAntesDe = (duracion: number) => Math.min(30_000, duracion / 2); // duracion en ms
 
 /**
- * Vigila el vencimiento del token: avisa a la mitad de la sesión y ofrece extenderla
+ * Vigila el vencimiento del token: avisa 30 segundos antes de que venza y ofrece extenderla
  * (refrescar el token). Si no se extiende, al vencer avisa con un modal que se puede cancelar: el
  * usuario se queda en la página, pero lo próximo que haga (un pedido a la API, que responde 401 y
  * atrapa sesionInterceptor, o ir a otra pantalla, que revisa sesionGuard) lo lleva al login.
